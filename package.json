@@ -1,0 +1,26 @@
+{
+  "name": "azeroth-ops",
+  "version": "0.13.0",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/server.cjs",
+    "dev": "node scripts/server.cjs",
+    "asset-map": "node scripts/build-asset-map.cjs",
+    "import": "node scripts/import-wow.cjs",
+    "import:characters": "node scripts/import-characters.cjs",
+    "test": "node --test --test-concurrency=2 tests/*.test.cjs",
+    "import:props": "node scripts/import-props.cjs",
+    "import:zeppelin": "node scripts/import-zeppelin.cjs",
+    "import:wow-all": "node scripts/import-wow-all.cjs",
+    "import:armory": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/import-armory.ps1"
+  },
+  "dependencies": {
+    "three": "0.180.0",
+    "three-mesh-bvh": "0.9.1",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  },
+  "license": "MIT"
+}

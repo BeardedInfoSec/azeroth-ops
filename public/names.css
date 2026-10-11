@@ -1,0 +1,10 @@
+/* Callsign and clan tag fields in the Operator tab. Colour-neutral: names never carry custom colours. */
+.callsign-fields{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:12px;align-items:end;max-width:520px}
+.callsign-fields label{display:grid;gap:6px;color:var(--cod-steel,#9fb1bc);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.callsign-fields input{min-height:44px;padding:10px 12px;background:var(--cod-panel-2,#1a2023);color:var(--cod-text,#e8ecee);border:1px solid var(--cod-line-strong,#ffffff44);font:600 16px var(--cod-body,Arial,sans-serif);letter-spacing:1px}
+.callsign-fields .callsign-tag input{text-transform:uppercase;text-align:center;letter-spacing:3px}
+.callsign-fields input:disabled{opacity:.5;cursor:not-allowed}
+.callsign-fields input[aria-invalid="true"]{border-color:var(--cod-danger,#e5392b)}
+.name-feedback{min-height:20px;margin:8px 0 0;color:var(--cod-dim,#8d9aa2);font-size:12px;letter-spacing:1px}
+.name-feedback.invalid{color:var(--cod-danger,#e5392b)}
+@media (max-width:520px){.callsign-fields{grid-template-columns:1fr 90px}}

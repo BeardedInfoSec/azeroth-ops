@@ -1,0 +1,9 @@
+node_modules/
+public/assets/
+public/ui/
+tools/
+cache/
+*.log
+artifacts/
+
+data/

@@ -1,0 +1,22 @@
+/* AI operators (bots) in LAN rooms. Uses the cod-theme tokens only. */
+.room-bots{margin:0 0 20px;padding:14px 16px;background:var(--cod-panel-solid,#101416);border:1px solid var(--cod-line,#ffffff1f);border-left:3px solid var(--cod-steel-2,#5f7380)}
+.room-bots[hidden]{display:none}
+.room-bots-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.room-bots-heading h3{margin:0;font:400 20px var(--cod-display,Impact,sans-serif);letter-spacing:2px;color:var(--cod-text,#e8ecee)}
+.room-bots-heading small{color:var(--cod-dim,#8d9aa2);letter-spacing:2px;font-size:10px;font-weight:700;text-transform:uppercase}
+.room-bots-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.room-bots-controls label{display:grid;gap:4px;color:var(--cod-steel,#9fb1bc);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.room-bots-controls select{min-height:38px;padding:8px 10px;background:var(--cod-panel-2,#1a2023);color:var(--cod-text,#e8ecee);border:1px solid var(--cod-line-strong,#ffffff44)}
+.room-bots-controls button{min-height:38px;padding:8px 14px;background:var(--cod-panel-2,#1a2023);color:var(--cod-text,#e8ecee);border:1px solid var(--cod-line-strong,#ffffff44);font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.room-bots-controls button:hover:not(:disabled){border-color:var(--cod-accent,#ff8a1f);color:var(--cod-accent-hi,#ffb347)}
+#bots-add-alliance{border-left:3px solid var(--cod-alliance,#6aa9d8)}
+#bots-add-horde{border-left:3px solid var(--cod-horde,#e0684f)}
+.room-bots-controls button:disabled,.room-bots-controls select:disabled,.room-bots-controls input:disabled{opacity:.45;cursor:not-allowed}
+.room-bots-controls .bots-fill{display:flex;align-items:center;gap:8px;min-height:38px}
+.room-bots-controls .bots-fill input{width:18px;height:18px;accent-color:var(--cod-accent,#ff8a1f)}
+/* Roster rows for bots: dimmer accent and a visible kick control. */
+.roster-player.is-bot{border-left-color:var(--cod-steel-2,#5f7380)}
+.roster-player.is-bot strong{color:var(--cod-steel,#9fb1bc)}
+.roster-player.is-bot.is-ready strong{color:var(--cod-steel,#9fb1bc)}
+.roster-kick-bot{border-color:var(--cod-danger,#e5392b)!important;color:var(--cod-danger,#e5392b)!important}
+@media (max-width:640px){.room-bots-controls{display:grid;grid-template-columns:1fr 1fr}.room-bots-controls .bots-fill{grid-column:1/-1}}

@@ -1,0 +1,42 @@
+.download-launch{border:0;border-bottom:1px solid #a6dcff66;background:transparent;color:#c5e7ff;padding:4px 0;font:700 10px Bahnschrift,'Segoe UI',sans-serif;letter-spacing:1px}
+#multiplayer-panel .lobby-nav .download-launch{margin-left:auto;font-size:12px;min-width:auto;color:#c5e7ff}
+#downloads{width:min(920px,calc(100vw - 32px));max-height:calc(100dvh - 40px);margin:auto;padding:28px;border:1px solid #7598b8;color:#e9f4ff;background:radial-gradient(ellipse at top right,#183b53,#0b1723 60%);box-shadow:0 24px 100px #000a;overflow:auto;font-family:Bahnschrift,'Segoe UI',Arial,sans-serif}
+#downloads::backdrop{background:#030912d9}
+#downloads [hidden]{display:none!important}
+.downloads-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.downloads-heading small{font-size:10px;letter-spacing:3px;color:#aad9fa}
+.downloads-heading h2{font:400 clamp(26px,4vw,38px)/1.15 Impact,Bahnschrift,sans-serif;letter-spacing:1px;margin:8px 0 12px}
+#downloads p{font-size:13px;line-height:1.55;color:#afc3d5}
+#downloads .downloads-intro{max-width:660px;margin:0 0 20px}
+#downloads button{font:700 10px Bahnschrift,'Segoe UI',sans-serif;letter-spacing:1px;min-height:36px;padding:10px 14px;color:#d9edff;border:1px solid #99bbd755;background:#17334a}
+#downloads button:hover:not(:disabled){border-color:#d7edff;background:#275272}
+#downloads button:disabled{cursor:default;opacity:.45}
+#downloads button:focus-visible{outline:2px solid #f5d596;outline-offset:3px}
+#downloads .download-primary{background:#dec38c;border-color:#dec38c;color:#122434;min-width:126px}
+#downloads .download-primary:hover:not(:disabled){background:#f3d7a1}
+#downloads .download-remove,#downloads-close,#download-clear{background:transparent}
+#download-packs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.download-card{position:relative;padding:20px;min-width:0;border:1px solid #819fb84d;background:linear-gradient(#071727ad,#071727 64%);isolation:isolate;overflow:hidden}
+.download-card::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.28;background-size:cover;background-position:center top}
+.download-card[data-pack="stormwind"]::before{background-image:url('/ui/stormwind.jpg')}
+.download-card[data-pack="dalaran"]::before{background-image:url('/ui/dalaran.jpg')}
+.download-card[data-pack="darnassus"]::before{background-image:url('/ui/darnassus.jpg')}
+.download-card[data-pack="core"]::before{background:repeating-linear-gradient(135deg,transparent,transparent 15px,#90c4e511 15px,#90c4e511 16px),radial-gradient(ellipse at top right,#659cb0,transparent 80%)}
+.download-card[data-complete="true"]{border-color:#88bba980}
+.download-category{font-size:9px;letter-spacing:2px;color:#a6cbe5}
+.download-name{font:400 26px/1.1 Impact,Bahnschrift,sans-serif;text-transform:uppercase;letter-spacing:1px;margin:10px 0}
+.download-state{font-size:9px;letter-spacing:1.5px;color:#e6c994}
+.download-card[data-complete="true"] .download-state{color:#a5dcc8}
+#downloads .download-size{margin:16px 0 6px;color:#e2edf5;font-variant-numeric:tabular-nums}
+.download-progress{display:block;width:100%;height:5px;border:0;background:#91aabe33;accent-color:#d7bd83}
+.download-progress::-webkit-progress-bar{background:#91aabe33}
+.download-progress::-webkit-progress-value{background:#d7bd83}
+.download-progress::-moz-progress-bar{background:#d7bd83}
+#downloads .download-detail{font-size:10px;min-height:16px;margin:9px 0 16px}
+.download-actions{display:flex;gap:8px;flex-wrap:wrap}
+#downloads #download-message{min-height:40px;margin:16px 0 10px}
+#downloads #download-message[data-error="true"],#downloads #download-warning{color:#ffcbac}
+#download-warning{border-left:2px solid #d99870;background:#9f613119;padding:10px 14px}
+.downloads-toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:16px;border-top:1px solid #819fb830}
+#downloads .downloads-footnote{font-size:11px;color:#879eaf;margin:16px 0 0}
+@media(max-width:600px){#downloads{padding:20px;max-height:calc(100dvh - 20px)}#download-packs{grid-template-columns:1fr}.downloads-heading{gap:8px}#downloads-close{padding:10px!important}.download-card{padding:16px}}

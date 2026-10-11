@@ -1,0 +1,23 @@
+#match-session{position:fixed;inset:0;z-index:14;padding:clamp(24px,4vw,68px);color:#edf5fb;font-family:Bahnschrift,'Segoe UI',sans-serif;background:linear-gradient(90deg,#07111eef 0%,#07111ec9 42%,#07111e38 100%);overflow:auto}
+#match-session[hidden],#match-session [hidden]{display:none!important}
+.session-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;color:#a8cfe8;font-size:11px;letter-spacing:3px;border-top:2px solid #a6d6f4;padding-top:18px}
+.session-heading small{font-size:10px;letter-spacing:1.5px;color:#98acbb}
+.session-layout{display:grid;grid-template-columns:minmax(280px,1fr) minmax(260px,.65fr);gap:clamp(30px,8vw,160px);align-items:center;max-width:1350px;min-height:75vh;margin:auto}
+.session-main{max-width:650px}.session-eyebrow{letter-spacing:4px;color:#d3b774;font-size:12px}
+.session-main h2{font:clamp(48px,6vw,100px)/1 Impact,Bahnschrift,sans-serif;letter-spacing:1px;margin:18px 0 26px}
+.session-rule{height:3px;width:65px;background:#c9a467;margin:24px 0}.session-main>small{font-size:13px;letter-spacing:3px;color:#bfd9ea}
+.session-main p{color:#9fb5c5;line-height:1.8;font-size:13px;max-width:420px;margin:15px 0 30px}
+#session-countdown{font:100px/1 Bahnschrift,sans-serif;display:block;margin-top:20px;color:#e7c784}
+#match-session button{font:700 11px Bahnschrift,'Segoe UI',sans-serif;letter-spacing:1.5px;background:#102536cc;color:#c2d8e6;border:1px solid #779bb440;min-height:43px;padding:14px 20px}
+#match-session button:hover:not(:disabled){background:#274c67;border-color:#9dd4f6}#match-session button:disabled{opacity:.5;cursor:default}
+#match-session button.session-primary{display:flex;justify-content:space-between;gap:40px;min-width:260px;background:#dec18b;color:#111f29;border-color:#dec18b;font-size:13px;min-height:55px}
+.session-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}#session-leave{border-color:transparent!important;background:transparent!important;color:#99adba!important}
+.session-squad{align-self:center;padding:26px;background:#0b1b2bd9;border:1px solid #789db236;border-top:3px solid #72b5e2}.session-squad h3{font-size:11px;letter-spacing:2px;margin:0 0 15px;display:flex;justify-content:space-between}.session-squad h3 span{color:#88bf9b}
+.session-player{padding:16px 0;border-bottom:1px solid #789db222;display:flex;flex-direction:column;gap:8px}.session-player strong{font-size:13px}.session-player span{font-size:10px;color:#8ca6ba;letter-spacing:.7px}.session-player.alliance strong{color:#b3d8f6}.session-player.horde strong{color:#edb9a5}
+.session-player progress{width:100%;height:4px;border:0;background:#284456;accent-color:#d8bb80}.session-player progress::-webkit-progress-bar{background:#284456}.session-player progress::-webkit-progress-value{background:#d8bb80}
+#match-session label{display:flex;flex-direction:column;gap:9px;font-size:9px;letter-spacing:2px;color:#9fb8ca}#match-session select{min-height:40px;padding:10px;font-size:12px}#session-class-wrap{max-width:320px;margin-top:24px}#session-class-wrap small{font-size:10px;letter-spacing:.3px;color:#8fa3b2}#session-host-tools{margin-top:20px;display:grid;gap:10px}
+body.match-session #multiplayer-panel,body.match-session #menu,body.match-session #operator,body.match-session>.game-header{display:none!important}body.match-session #vignette{background:radial-gradient(ellipse,transparent 45%,#07121b66)}body.match-session>footer{z-index:1}
+body.match-session:not(.playing) #reticle,body.match-session:not(.playing) .hud-hint{visibility:hidden}
+#match-session :is(button,select):focus-visible{outline:2px solid #dfc794;outline-offset:4px}
+@media(max-width:780px){#match-session{padding:24px}.session-heading{align-items:flex-start;flex-direction:column;gap:10px}.session-layout{grid-template-columns:1fr;gap:26px;min-height:0;margin-top:40px}.session-main h2{font-size:60px;margin:15px 0}.session-squad{padding:20px}.session-main p{margin-bottom:18px}#session-countdown{font-size:68px}}
+@media(max-height:760px) and (min-width:781px){.session-layout{min-height:75vh;gap:60px}.session-main h2{font-size:68px}.session-rule{margin:16px 0}.session-player{padding:10px 0}.session-main p{margin-bottom:20px}.session-actions{margin-top:18px}}

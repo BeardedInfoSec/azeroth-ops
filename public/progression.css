@@ -1,0 +1,23 @@
+/* Rank badge (lobby header) and end-of-match XP breakdown. Uses cod-theme tokens. */
+.rank-badge{display:flex;align-items:center;gap:10px;margin-left:18px;padding:5px 12px 5px 6px;background:var(--cod-panel-solid,#101416);border:1px solid var(--cod-line-strong,#ffffff44);clip-path:var(--cod-clip-r,none)}
+.rank-badge[hidden]{display:none}
+.rank-level{display:grid;place-items:center;min-width:34px;height:34px;background:var(--cod-accent,#ff8a1f);color:#111;font-family:var(--cod-display,Impact,sans-serif);font-size:20px;letter-spacing:1px}
+.rank-meta{display:grid;gap:3px;min-width:150px}
+.rank-meta strong{font-family:var(--cod-display,Impact,sans-serif);font-size:13px;letter-spacing:2px;color:var(--cod-text,#e8ecee)}
+.rank-meta small{font-size:9px;letter-spacing:1.5px;color:var(--cod-dim,#8d9aa2)}
+.rank-bar,.xp-bar{height:5px;background:var(--cod-line,#ffffff1f);overflow:hidden}
+.rank-bar i,.xp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cod-accent,#ff8a1f),var(--cod-accent-hi,#ffb347));transition:width .4s ease}
+@media(max-width:1099px){.rank-badge{margin-left:auto}}
+
+.xp-summary{margin:14px 0;padding:12px 14px;background:var(--cod-panel,#12161888);border:1px solid var(--cod-line-strong,#ffffff44);border-left:3px solid var(--cod-accent,#ff8a1f);font-family:var(--cod-body,Arial,sans-serif)}
+.xp-summary[hidden]{display:none}
+.xp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.xp-head small{letter-spacing:3px;font-size:10px;color:var(--cod-steel,#9fb1bc)}
+.xp-head strong{font-family:var(--cod-display,Impact,sans-serif);font-size:26px;color:var(--cod-accent-hi,#ffb347)}
+.xp-lines{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:3px}
+.xp-lines li{display:flex;justify-content:space-between;font-size:12px;letter-spacing:1px;color:var(--cod-text,#e8ecee)}
+.xp-lines b{color:var(--cod-ok,#9bd36a)}
+.xp-note{font-size:10px;color:var(--cod-dim,#8d9aa2);margin:4px 0}
+.xp-rank{margin:8px 0 4px;font-size:11px;letter-spacing:2px;color:var(--cod-steel,#9fb1bc)}
+.xp-levelup{margin:6px 0 0;font-family:var(--cod-display,Impact,sans-serif);letter-spacing:3px;color:var(--cod-accent,#ff8a1f)}
+.xp-unlock{margin:3px 0 0;font-size:11px;letter-spacing:1px;color:var(--cod-ok,#9bd36a)}

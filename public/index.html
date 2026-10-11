@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Azeroth Ops | Factions at War</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/operator.css"><link rel="stylesheet" href="/shell.css"><link rel="stylesheet" href="/survival.css"><link rel="stylesheet" href="/battle-royale.css"><link rel="stylesheet" href="/lobby.css"><link rel="stylesheet" href="/downloads.css"><link rel="stylesheet" href="/match-session.css"><link rel="stylesheet" href="/cod-theme.css"><link rel="stylesheet" href="/domination.css"><link rel="stylesheet" href="/progression.css"><link rel="stylesheet" href="/loadout.css"><link rel="stylesheet" href="/bots.css"><link rel="stylesheet" href="/names.css"><link rel="icon" href="data:,"><script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/","three-mesh-bvh":"/vendor/bvh/build/index.module.js"}}</script></head>
+<body>
+<canvas id="game"></canvas>
+<div id="vignette"></div><div id="damage"></div>
+<header class="game-header"><a class="brand" href="/">AO<span>AZEROTH OPS<small>AZEROTH PMC CONTRACTS</small></span></a><div class="status"><i></i> LOCAL NETWORK <span>BUILD 0.13.0</span></div></header>
+<main id="menu">
+  <section class="home-command">
+    <div class="eyebrow">AZEROTH PMC CONTRACTS // TWO FACTIONS. ONE BATTLEFIELD.</div>
+    <h1>AZEROTH<br><em>OPS</em><span>THE WAR HAS CHANGED.</span></h1>
+    <p class="intro">Your world. Your squad. A new kind of warfare.</p>
+    <button id="lobby-open" class="lan-launch"><span><small>PARTY LOBBY / TEAM DEATHMATCH / UNDEAD CO-OP</small><strong>MULTIPLAYER</strong></span><b aria-hidden="true">&#8599;</b></button>
+    <div class="home-mode-label"><span>SOLO CONTRACTS // ZOMBIES / BATTLE ROYALE / COMBAT TRAINING</span><i></i></div>
+    <div class="deploy"><button id="play" disabled>LOADING ASSETS...</button><select id="mode" aria-label="Game mode"><option value="undead">ZOMBIES / UNDEAD SURVIVAL</option><option value="royale">BATTLE ROYALE</option><option value="factions">COMBAT TRAINING / VS BOTS</option><option value="explore">FREE ROAM</option></select></div>
+    <button id="restart" hidden>RESTART EXERCISE</button>
+    <p id="solo-royale-brief" hidden>LAST PLAYER STANDING / Space to jump. WASD to glide. Land inside the safe zone and outlast every opponent.</p>
+    <p id="loading" role="status">Preparing your deployment...</p>
+    <p class="hub-sub">ZOMBIES: hold the line against the undead. BATTLE ROYALE: last operator standing. COMBAT TRAINING: sharpen your aim against bots. ARMORY and OPERATOR are inside MULTIPLAYER.</p><a class="workshop-launch" href="/editor.html"><span>MAP WORKSHOP</span> PLACE PROPS / SHAPE YOUR BATTLEFIELD &#8599;</a>
+  </section>
+  <section class="home-setup">
+    <div class="section-title"><span>DEPLOYMENT ZONE</span><button type="button" class="download-launch" data-downloads-open>MAP DOWNLOADS &#8595;</button></div>
+    <div id="maps" role="group" aria-label="Choose city">
+      <button class="map selected" data-map="stormwind"><small>EASTERN KINGDOMS</small><strong>STORMWIND</strong><span>Trade District</span></button>
+      <button class="map" data-map="dalaran"><small>NORTHREND</small><strong>DALARAN</strong><span>The Eventide</span></button>
+      <button class="map" data-map="darnassus"><small>KALIMDOR</small><strong>DARNASSUS</strong><span>Temple Gardens</span></button>
+    </div>
+    <div class="operator-select"><label>FACTION<select id="faction" aria-label="Faction"><option value="alliance">Alliance</option><option value="horde">Horde</option></select></label><label>RACE<select id="race" aria-label="Race"><option value="human">Human</option></select></label><article class="racial-trait" aria-live="polite"><small>RACIAL PASSIVE</small><strong id="racial-trait-name">Helping Hand</strong><p id="racial-trait-description">Revive actions take 15% less time. Support bonus: only applies when a revival is available.</p></article></div>
+    <label class="loadout-label">PRACTICE WEAPON<select id="loadout" aria-label="Weapon"><option>Loading armory...</option></select></label>
+    <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>RMB</kbd> Aim</span><span><kbd>R</kbd> Reload</span><span><kbd>Q</kbd> Knife</span><span><kbd>C</kbd> Crouch</span><span><kbd>ESC</kbd> Menu</span></div>
+  </section>
+</main>
+<aside id="operator"><div class="operator-top"><small>YOUR OPERATOR</small><span id="operator-faction">ALLIANCE</span></div><canvas id="operator-canvas" width="300" height="380"></canvas><strong id="operator-name">Human</strong><span id="operator-description">READY FOR DEPLOYMENT</span><small>PRESS V IN GAME / THIRD PERSON</small></aside>
+
+<section id="multiplayer-panel" hidden aria-label="LAN multiplayer lobby">
+  <div class="lobby-heading"><div class="lobby-brand"><b>AO</b><div><small>AZEROTH OPS</small><h2>MULTIPLAYER</h2></div></div><div class="lobby-session"><span class="online-dot"></span> LOCAL NETWORK</div><div id="rank-badge" class="rank-badge" hidden aria-label="Rank and experience"><b id="rank-level">1</b><div class="rank-meta"><strong id="rank-name">PEON</strong><div class="rank-bar"><i id="rank-fill"></i></div><small id="rank-xp"></small></div></div><button id="lobby-close">&#8592; MAIN MENU</button></div>
+  <nav class="lobby-nav" aria-label="Multiplayer sections"><button data-lobby-view="play"><small>01</small> PLAY</button><button data-lobby-view="classes"><small>02</small> ARMORY // CREATE A CLASS</button><button data-lobby-view="operator"><small>03</small> OPERATOR // CALLSIGN</button><button type="button" class="download-launch" data-downloads-open>MAP DOWNLOADS &#8595;</button><a class="workshop-nav" href="/editor.html">MAP WORKSHOP &#8599;</a></nav>
+  <div class="lobby-layout">
+    <div id="lobby-play-view" class="lobby-view">
+      <article class="lobby-hero">
+        <div id="lobby-map-preview" class="lobby-map-preview" role="img" aria-label="Stormwind battlefield"></div>
+        <div class="hero-overline"><span>PRIVATE MATCH</span><span id="lobby-mode-format">5v5 / TDM</span></div>
+        <div class="hero-copy"><small>YOUR NEXT BATTLEFIELD</small><h2 id="lobby-map-name">STORMWIND</h2><p id="lobby-map-location">TRADE DISTRICT / EASTERN KINGDOMS</p><div class="hero-rule" id="lobby-mode-rule">HORDE <span>VS</span> ALLIANCE</div></div>
+        <div class="lobby-hero-bottom"><small id="lobby-loadout-label">ACTIVE CLASS</small><strong id="lobby-loadout-summary">ASSAULT</strong><button id="lobby-customize-loadout" data-lobby-view="classes">CUSTOMIZE LOADOUT &#8599;</button></div>
+      </article>
+      <div class="lobby-main">
+        <div id="room-browser"><div class="list-heading"><div><small>FIND YOUR SQUAD</small><h3>PRIVATE LOBBIES</h3></div><button id="room-refresh" aria-label="Refresh lobby list">REFRESH</button></div><p>Create a match or join friends on your local network.</p><button id="room-create" class="primary">+ CREATE A LOBBY</button><div class="lobby-join"><label for="room-code">HAVE AN INVITE CODE?</label><div><input id="room-code" placeholder="ENTER CODE" maxlength="6" aria-label="Room code"><button id="room-join">JOIN LOBBY &#8594;</button></div></div><div class="list-heading"><h3>OPEN LOBBIES</h3><span>UP TO 10 PLAYERS</span></div><div id="room-list"></div></div>
+        <div id="room-detail" hidden><div class="list-heading"><h3 id="room-title"></h3><span id="room-phase"></span></div>
+          <div class="match-settings"><label>GAME MODE<select id="room-mode"><option value="tdm">Team Deathmatch</option><option value="royale">Azeroth Battle Royale</option><option value="zombies">Undead Co-op</option><option value="domination">Domination</option></select></label><label>BATTLEFIELD<select id="room-map"><option value="stormwind">Stormwind</option><option value="dalaran">Dalaran</option><option value="darnassus">Darnassus</option></select></label><label>SCORE TO WIN<select id="room-target"><option>10</option><option>20</option><option selected>50</option><option>75</option></select></label><label>TIME LIMIT<select id="room-duration"><option value="300">5 minutes</option><option value="600" selected>10 minutes</option><option value="900">15 minutes</option></select></label></div>
+          <section id="room-bots" class="room-bots" aria-label="AI operators" hidden><div class="room-bots-heading"><h3>AI OPERATORS</h3><small id="bots-note">HOST CONTROLS / BOTS NEVER EARN PROFILE XP</small></div><div class="room-bots-controls"><label>DIFFICULTY<select id="bots-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label><button id="bots-add-alliance" type="button">+ ALLIANCE BOT</button><button id="bots-add-horde" type="button">+ HORDE BOT</button><label class="bots-fill"><input id="bots-fill" type="checkbox"> FILL EMPTY SLOTS</label><label>OCCUPANTS<select id="bots-target"><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label></div></section>
+          <p id="room-royale-brief" class="royale-brief" hidden>EVERY OPERATOR FOR THEMSELVES. Space to jump / WASD to glide. Survive the closing zone. One life. Last player standing wins.</p>
+          <p id="room-zombies-brief" class="zombies-brief" hidden>1–4 SURVIVORS / Horde and Alliance fight together. Share waves, boards and opened zones. Earn your own points, perks and Pack-a-Punch upgrades. Hold E near a downed teammate to revive them. Start with an AN-94; buy weapons in the city. Friendly fire is off.</p>
+          <section id="room-operator" class="room-operator" aria-label="Your faction and race"><div class="room-operator-heading"><h3>YOUR OPERATOR</h3><small>CHANGES CLEAR YOUR READY STATUS</small></div><div id="room-operator-controls"></div></section>
+          <div class="royale-roster" hidden><h3><span id="shared-roster-title">OPERATORS / FREE FOR ALL</span><span id="royale-player-count"></span></h3><div id="roster-royale"></div></div>
+          <div class="team-rosters"><section><h3><span>01</span> ALLIANCE</h3><div id="roster-alliance"></div></section><section><h3><span>02</span> HORDE</h3><div id="roster-horde"></div></section></div>
+          <div class="lobby-actions"><button id="room-ready" class="primary">READY UP</button><button id="room-start">START MATCH</button><button id="room-enter" hidden>ENTER MATCH</button><button id="room-return" hidden>RETURN TO LOBBY</button><button id="room-leave">LEAVE LOBBY</button></div>
+        </div>
+      </div>
+    </div>
+    <div id="lobby-classes-view" class="lobby-view" hidden>
+      <div class="class-topbar"><div><small>ARMORY // YOUR PLAYSTYLE. YOUR FIREPOWER.</small><h2>CREATE A CLASS</h2></div><p>Pick 10. Weapons, attachments, perks, wildcards. Make it yours.</p><div id="pick10-meter" class="pick10" role="meter" aria-label="Pick 10 points used" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><small>PICK 10</small><div class="pick10-pips" id="pick10-pips"></div><strong id="pick10-text">0 / 10</strong></div></div>
+      <div id="class-slots" aria-label="Saved classes"></div>
+      <div class="class-builder">
+        <aside class="class-editor">
+          <div class="class-toolbar">
+            <label class="class-name-field">CLASS NAME<input id="class-name" maxlength="20" autocomplete="off"></label>
+            <div class="class-actions">
+              <label class="class-copy-field">COPY TO<select id="class-copy-target" aria-label="Copy this class to slot"></select></label>
+              <button type="button" id="class-copy">COPY</button><button type="button" id="class-reset">RESET</button><button type="button" id="class-share-toggle" aria-expanded="false" aria-controls="class-share">EXPORT / IMPORT</button>
+            </div>
+          </div>
+          <div id="class-share" class="class-share" hidden><label>CLASS STRING<textarea id="class-json" rows="3" maxlength="2400" spellcheck="false" aria-label="Class JSON string"></textarea></label><div class="class-actions"><button type="button" id="class-export">EXPORT THIS CLASS</button><button type="button" id="class-import">IMPORT INTO THIS SLOT</button></div><p id="class-share-msg" role="status"></p></div>
+          <div class="class-legacy" hidden aria-hidden="true"><select id="class-slot"></select><select id="class-primary"></select><select id="class-secondary"></select><select id="class-perk"></select><select id="class-primary-attachment"></select><select id="class-secondary-attachment"></select></div>
+          <div id="class-builder-grid" class="cb-grid" aria-label="Class slots"></div>
+          <p id="class-mode-note">Classes save automatically. During a match, changes equip on your next respawn.</p>
+        </aside>
+        <section id="class-picker" class="cb-picker" aria-label="Choose an item" aria-live="polite"></section>
+        <div class="class-intel"><div class="armory-stage"><div class="armory-caption"><small>WEAPON / INSPECT</small><strong id="armory-weapon-name">AN-94</strong></div><canvas id="armory-canvas" aria-label="3D preview of the inspected weapon"></canvas><span class="armory-hint">ORIGINAL BO2 ARMORY</span></div><div id="class-weapon-preview"></div></div>
+      </div>
+    </div>
+    <div id="lobby-operator-view" class="lobby-view" hidden>
+      <div class="operator-brief"><small id="operator-mode-eyebrow">CHOOSE YOUR ALLEGIANCE</small><h2>YOUR OPERATOR</h2><p id="operator-mode-description">Stand with your faction. Bring your own firepower.</p><div class="callsign-fields"><label class="callsign-name">CALLSIGN<input id="player-name" maxlength="16" autocomplete="nickname" spellcheck="false" aria-describedby="name-feedback"></label><label class="callsign-tag">CLAN TAG<input id="player-tag" maxlength="4" autocomplete="off" spellcheck="false" placeholder="TAG" aria-describedby="name-feedback"></label></div><p id="name-feedback" class="name-feedback" role="status" aria-live="polite"></p><div id="lobby-operator"></div><div class="operator-note"><small id="operator-mode-title">FACTION WARFARE</small><p id="operator-mode-note">Five races per faction. Your team and race lock when the match starts.</p></div></div>
+      <div id="lobby-operator-stage"></div>
+    </div>
+  </div>
+  <div class="lobby-footer"><div class="lobby-live-status"><i></i><p id="lobby-status" role="status">Connecting to your network...</p></div><div class="lan-share"><small>INVITE FRIENDS / SAME NETWORK</small><strong id="lan-address"></strong></div></div>
+</section>
+
+<section id="match-session" hidden aria-label="Match session">
+  <div class="session-heading"><span>AO / DEPLOYMENT CONTROL</span><small id="session-room"></small></div>
+  <div class="session-layout">
+    <article class="session-main"><div id="session-mode" class="session-eyebrow"></div><h2 id="session-map"></h2><div class="session-rule"></div><small id="session-title"></small><strong id="session-countdown" hidden>3</strong><p id="session-detail" role="status"></p><section id="session-xp" class="xp-summary" hidden aria-label="Match rewards"></section><button id="session-resume" class="session-primary">RESUME CONTROL <span>&#8594;</span></button><label id="session-class-wrap">YOUR CLASS<select id="session-class"></select><small id="session-class-note"></small></label><div class="session-actions"><button id="session-return" hidden>RETURN SQUAD TO LOBBY</button><button id="session-leave">LEAVE MATCH</button></div></article>
+    <aside class="session-squad"><h3>CONNECTED OPERATORS <span>LAN</span></h3><div id="session-roster"></div><div id="session-host-tools" hidden><label>LOBBY LEADER<select id="session-leader"></select></label><button id="session-transfer">TRANSFER LEADERSHIP</button></div></aside>
+  </div>
+</section>
+<div id="match-scoreboard" hidden><h3>TEAM DEATHMATCH / SCOREBOARD</h3><div id="scoreboard-rows"></div></div>
+<div id="hud" hidden>
+  <div class="location"><small id="player-identity">ALLIANCE / HUMAN</small><strong id="city-name">STORMWIND</strong><span id="objective">Survive the Scourge</span></div>
+  <div class="top-score"><span id="kills">00 / 06</span><small id="timer">00:00</small></div>
+  <div id="domination-hud" class="domination-hud" hidden aria-label="Domination capture points"></div>
+  <div id="reticle"><b></b><b></b><b></b><b></b></div><div id="hitmarker">×</div>
+  <div id="notice" role="status"></div>
+  <div class="health"><small>VITALS</small><strong><span id="hp">100</span><span class="thin"> HP</span></strong><div><i id="healthbar"></i></div></div>
+  <div class="ammo"><small><b id="gun-name">AN–94</b> <span id="gun-caliber">5.45 / AUTO</span></small><strong><span id="rounds">30</span><span class="thin"> / </span><span id="reserve">180</span></strong><span id="weapon-state">READY</span></div>
+  <div class="hud-hint">1 / 2 Rifles ? 6 / 7 Snipers &nbsp; • &nbsp; C Crouch &nbsp; ? &nbsp; R Reload &nbsp; • &nbsp; RMB Aim &nbsp; • &nbsp; V Camera &nbsp; • &nbsp; ESC Menu &nbsp; • &nbsp; F Reset position</div>
+  <canvas id="radar" width="180" height="180"></canvas>
+</div>
+<footer><span>AZEROTH OPS</span><span id="metrics">INITIALIZING</span><span>LOCAL NETWORK / PRIVATE MATCH</span></footer>
+<dialog id="downloads" aria-labelledby="downloads-title" aria-describedby="downloads-intro">
+  <div class="downloads-heading"><div><small>YOUR BATTLEFIELDS / THIS BROWSER</small><h2 id="downloads-title">MAP DOWNLOADS</h2></div><button type="button" id="downloads-close" autofocus>CLOSE &#215;</button></div>
+  <p id="downloads-intro" class="downloads-intro">Save the cities before your squad joins. Played maps save automatically; download the rest now for faster return visits.</p>
+  <div id="download-packs"></div>
+  <p id="download-message" role="status" aria-live="polite">Checking your saved maps...</p>
+  <p id="download-warning" role="status" hidden></p>
+  <div class="downloads-toolbar"><button type="button" id="download-refresh">CHECK FOR UPDATES</button><button type="button" id="download-clear" disabled>REMOVE ALL DOWNLOADS</button></div>
+  <p class="downloads-footnote">Saved for this browser and server address. Keep using the same address. Your host must still be online, and scenes still need time to build. Your browser may clear downloads if storage runs low.</p>
+</dialog>
+<script type="module" src="/src/downloads.js"></script>
+<script type="module" src="/src/game.js"></script>
+</body></html>

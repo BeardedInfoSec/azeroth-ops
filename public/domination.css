@@ -1,0 +1,22 @@
+/* Domination HUD strip: structural defaults only. The theme layer may re-skin
+   every class below (.domination-hud, .dom-side, .dom-score, .dom-bar,
+   .dom-fill, .dom-points, .dom-point[data-state][data-owner][data-side]). */
+.domination-hud{position:absolute;top:92px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;pointer-events:none}
+.domination-hud[hidden]{display:none}
+.dom-side{display:flex;align-items:center;gap:8px;min-width:150px}
+.dom-side.horde{flex-direction:row-reverse}
+.dom-score{font-size:18px;font-weight:700;min-width:34px;text-align:center}
+.dom-bar{display:block;flex:1;height:5px;background:#ffffff30;overflow:hidden;isolation:isolate}
+.dom-fill{display:block;height:100%;width:0;background:currentColor}
+.dom-side.alliance{color:#70b8ff}
+.dom-side.horde{color:#f06a50}
+.dom-side.horde .dom-fill{margin-left:auto}
+.dom-points{display:flex;gap:8px}
+.dom-point{position:relative;width:30px;height:30px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;border:2px solid #c9ced1;background:#0b2027b0;overflow:hidden;isolation:isolate}
+.dom-point::before{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(var(--progress,0) * 1%);background:#c9ced1;opacity:.45;z-index:-1}
+.dom-point[data-side="alliance"]{border-color:#70b8ff}.dom-point[data-side="alliance"]::before{background:#70b8ff}
+.dom-point[data-side="horde"]{border-color:#f06a50}.dom-point[data-side="horde"]::before{background:#f06a50}
+.dom-point[data-state="owned"]::before{opacity:.85}
+.dom-point.contested{border-color:#ffd35a;animation:dom-pulse .6s infinite alternate}
+@keyframes dom-pulse{to{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.dom-point.contested{animation:none}}
