@@ -6,6 +6,16 @@
 
 This repository contains **only original source code** (MIT, see `LICENSE`). It contains **no** World of Warcraft or Call of Duty game assets: `public/assets/`, `public/ui/`, `tools/` and `cache/` are git-ignored and must stay out of the repository. To run the game you need your own legally obtained copies of World of Warcraft: Wrath of the Lich King 3.3.5 (build 12340) and Call of Duty: Black Ops II, and you generate the assets locally with the import scripts (`npm run import:wow-all -- "<WoW folder>"`, then the BO2 `.ps1` imports listed under Development). Do not upload extracted assets. "World of Warcraft" and "Call of Duty" are trademarks of their respective owners.
 
+## Screenshots
+
+Captured from the running game with `node scripts/capture-screenshots.cjs` (headless, isolated server). The art is from the author's own local game installs and is shown for illustration only.
+
+| | |
+|---|---|
+| ![Main menu](docs/screenshots/01-main-menu.jpg) | ![Multiplayer lobby](docs/screenshots/02-lobby.jpg) |
+| ![Create-a-Class armory](docs/screenshots/03-armory.jpg) | ![Zombies in Stormwind](docs/screenshots/05-zombies-first-person.jpg) |
+| ![Battle Royale zeppelin](docs/screenshots/07-royale-zeppelin.jpg) | ![Battle Royale glide](docs/screenshots/08-royale-glide.jpg) |
+
 A custom local FPS engine and playable prototype built in this directory. It uses the real main city WMO geometry and textures from your Wrath 3.3.5 (12340) copy, plus the original AN-94, SCAR-H, DSR 50 and Ballista weapon models and color textures from your Black Ops II installation. Both game installations are read-only inputs.
 
 ## Play

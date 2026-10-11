@@ -59,7 +59,7 @@ function createAssetServer({root = ROOT, catalog = createAssetCatalog({assetRoot
     if(pathname === '/api/server') {
       res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');
       const port=server.address()?.port||8097;
-      res.end(req.method === 'HEAD' ? undefined : JSON.stringify({version:'0.13.0',multiplayer:true,addresses:Object.values(os.networkInterfaces()).flat().filter(n=>n.family==='IPv4'&&!n.internal).map(n=>'http://'+n.address+':'+port)}));return;
+      res.end(req.method === 'HEAD' ? undefined : JSON.stringify({version:'0.14.0',multiplayer:true,addresses:Object.values(os.networkInterfaces()).flat().filter(n=>n.family==='IPv4'&&!n.internal).map(n=>'http://'+n.address+':'+port)}));return;
     }
     if(pathname === '/api/assets/manifest') {
       res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');

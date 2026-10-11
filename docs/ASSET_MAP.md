@@ -109,7 +109,7 @@ CoD owns the combat layer (guns, gun/FX audio, perk machines, sentry/UAV concept
 
 - Original source code, CSS and HTML are MIT (LICENSE). vendor/mpq is MIT (wow.export); three.js and three-mesh-bvh are MIT.
 - All COD_BO2 and WOW_3_3_5 assets (and MIXED) are NOT redistributable. public/assets/, public/ui/, tools/ and cache/ must stay git-ignored.
-- Code statistics: src 69 files, server 10 files, scripts 43 files, tests 78 files, vendor 6 files, public/*.css|html 18 files.
+- Code statistics: src 69 files, server 10 files, scripts 44 files, tests 78 files, vendor 6 files, public/*.css|html 18 files.
 
 ## New asset folders
 

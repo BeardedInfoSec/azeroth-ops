@@ -364,8 +364,8 @@
       "bytes": 153245
     },
     "scripts": {
-      "files": 43,
-      "bytes": 196637
+      "files": 44,
+      "bytes": 199594
     },
     "tests": {
       "files": 78,
@@ -377,7 +377,7 @@
     },
     "public/*.css|html": {
       "files": 18,
-      "bytes": 154594
+      "bytes": 154497
     }
   },
   "designRule": {
