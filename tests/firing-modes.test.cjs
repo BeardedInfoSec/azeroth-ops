@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),http=require('node:http'),{WebSocket}=require('ws');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 const {timeline}=require('./fixtures/weapon-timeline.cjs');
 async function setup(){return {...await import('../src/engine/weapon-simulation.mjs'),...await import('../src/engine/firing-modes.mjs'),...await import('../src/engine/aim.mjs'),...await import('../src/weapon-data.js')};}
 const idx=(GUNS,id)=>GUNS.findIndex(g=>g.id===id);
@@ -108,7 +109,7 @@ test('Weapon simulation supports every gun index',async()=>{
 
 // ---- Authoritative server -------------------------------------------------------------------------------------
 const wait=async predicate=>{const until=Date.now()+12000;while(!predicate()){if(Date.now()>until)throw Error('Timed out');await new Promise(r=>setTimeout(r,20));}};
-test('Server: pump cycle gates fire messages, one ammo per shot, pellet rays capped, damage summed',async()=>{
+test('Server: pump cycle gates fire messages, one ammo per shot, pellet rays capped, damage summed',skipUnlessAssets('stormwind.json','props/stormwind.json'),async()=>{
   const {attachMultiplayer}=await import('../server/multiplayer.mjs'),T=await import('three'),{GUNS}=await import('../src/weapon-data.js');
   const server=http.createServer(),net=attachMultiplayer(server);await new Promise(r=>server.listen(0,'127.0.0.1',r));const sockets=[];
   async function connect(){const ws=new WebSocket('ws://127.0.0.1:'+server.address().port+'/multiplayer'),c={ws,messages:[],send:m=>ws.send(JSON.stringify(m))};sockets.push(ws);ws.on('message',raw=>{const m=JSON.parse(raw);c.messages.push(m);if(m.type==='welcome')c.id=m.id;if(m.type==='room')c.room=m.room;});await wait(()=>c.id);return c;}

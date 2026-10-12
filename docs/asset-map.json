@@ -368,8 +368,8 @@
       "bytes": 199594
     },
     "tests": {
-      "files": 78,
-      "bytes": 537569
+      "files": 79,
+      "bytes": 540721
     },
     "vendor": {
       "files": 6,
@@ -377,7 +377,7 @@
     },
     "public/*.css|html": {
       "files": 18,
-      "bytes": 154497
+      "bytes": 154836
     }
   },
   "designRule": {

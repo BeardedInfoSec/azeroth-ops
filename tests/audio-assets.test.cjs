@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 const root=path.resolve(__dirname,'../public'),manifestPath=path.join(root,'assets/audio/manifest.json');
 const weapons=['an94_mp','scar_mp','dsr50_mp','ballista_mp'];
 function wav(buffer){
@@ -7,12 +8,12 @@ function wav(buffer){
  assert.ok(format&&data,'WAV contains format and PCM data');assert.equal(format.encoding,1,'Original decoded PCM format');assert.equal(format.bitsPerSample,16);assert.equal(format.sampleRate,48000);assert.ok([1,2].includes(format.channels));assert.equal(format.blockAlign,format.channels*2);assert.equal(data.length%format.blockAlign,0);
  let power=0,peak=0;for(let i=0;i<data.length;i+=2){const sample=data.readInt16LE(i)/32768;power+=sample*sample;peak=Math.max(peak,Math.abs(sample));}const frames=data.length/format.blockAlign;return {...format,frames,duration:frames/format.sampleRate,peak,rms:Math.sqrt(power/(data.length/2))};
 }
-test('all four weapons map to original BO2 firing and timed reload audio',()=>{
+test('all four weapons map to original BO2 firing and timed reload audio',skipUnlessAssets('audio/manifest.json'),()=>{
  const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));assert.equal(manifest.version,1);assert.equal(manifest.source.game,'Call of Duty: Black Ops II');
  for(const id of weapons){const gun=manifest.weapons[id];assert.ok(gun,id+' present');assert.ok(gun.shot.length>0,id+' firing clips');for(const url of gun.shot)assert.ok(manifest.files[url],url+' metadata');for(const kind of ['reload','reloadEmpty']){assert.ok(gun[kind].length>0,id+' '+kind);let previous=-1;for(const event of gun[kind]){assert.ok(Number.isFinite(event.at)&&event.at>=0&&event.at>=previous,'Reload event order');previous=event.at;assert.ok(event.clips.length>0);for(const url of event.clips)assert.ok(manifest.files[url],url+' metadata');}}for(const event of gun.bolt||[])for(const url of event.clips||[])assert.ok(manifest.files[url]);}
  const signatures=weapons.map(id=>manifest.weapons[id].shot.map(url=>manifest.files[url].sha256).sort().join(','));assert.equal(new Set(signatures).size,4,'Each weapon retains its own firing sound');
 });
-test('audio assets match provenance hashes and contain non-silent 48 kHz PCM16',()=>{
+test('audio assets match provenance hashes and contain non-silent 48 kHz PCM16',skipUnlessAssets('audio/manifest.json'),()=>{
  const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));assert.ok(Object.keys(manifest.files).length>=4);
  for(const [url,meta] of Object.entries(manifest.files)){assert.ok(url.startsWith('/assets/audio/'));const file=path.resolve(root,'.'+url);assert.ok(file.startsWith(path.join(root,'assets/audio')+path.sep),'Asset path stays in audio directory');const data=fs.readFileSync(file);assert.equal(crypto.createHash('sha256').update(data).digest('hex'),meta.sha256,url+' source hash');assert.ok(typeof meta.sourcePath==='string'&&meta.sourcePath.length>0);const actual=wav(data);assert.ok(actual.peak>.001&&actual.rms>.00001,url+' audible signal');assert.ok(actual.duration>0&&actual.duration<30,url+' bounded original cue');for(const field of ['channels','sampleRate','bitsPerSample','frames'])assert.equal(actual[field],meta.format[field],url+' '+field);assert.ok(Math.abs(actual.duration-meta.format.duration)<1/48000,url+' duration');}
 });

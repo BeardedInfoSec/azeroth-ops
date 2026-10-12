@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 
 // Tiny skinned fixture with the BO2 turret tag names; no GPU, no network.
 async function fixture(){
@@ -48,7 +49,7 @@ test('Sentry instances own geometry and materials, share textures, and dispose o
   b.dispose();
 });
 
-test('Prepared BO2 sentry export keeps its animation tags, local PNG textures and provenance hashes',()=>{
+test('Prepared BO2 sentry export keeps its animation tags, local PNG textures and provenance hashes',skipUnlessAssets('streaks/provenance.json'),()=>{
   const dir=path.resolve('public/assets/streaks'),provenance=JSON.parse(fs.readFileSync(path.join(dir,'provenance.json'),'utf8'));
   assert.equal(provenance.sourceModel,'t6_wpn_turret_sentry_gun');assert.match(provenance.archive,/common_mp\.ff$/);
   const file=fs.readFileSync(path.join('public',provenance.model));

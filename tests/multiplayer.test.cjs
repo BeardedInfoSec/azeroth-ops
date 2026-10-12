@@ -1,6 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),http=require('node:http'),{WebSocket}=require('ws');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 const wait=async predicate=>{const until=Date.now()+12000;while(!predicate()){if(Date.now()>until)throw Error('Timed out');await new Promise(r=>setTimeout(r,20));}};
-test('LAN lifecycle, authoritative hits, randomized respawns, classes and host migration',async()=>{
+test('LAN lifecycle, authoritative hits, randomized respawns, classes and host migration',skipUnlessAssets('stormwind.json','props/stormwind.json'),async()=>{
  const {attachMultiplayer}=await import('../server/multiplayer.mjs'),T=await import('three');const server=http.createServer(),net=attachMultiplayer(server);await new Promise(r=>server.listen(0,'127.0.0.1',r));const sockets=[];
  async function connect(){const ws=new WebSocket('ws://127.0.0.1:'+server.address().port+'/multiplayer'),c={ws,messages:[],send:m=>ws.send(JSON.stringify(m))};sockets.push(ws);ws.on('message',raw=>{const m=JSON.parse(raw);c.messages.push(m);if(m.type==='welcome')c.id=m.id;if(m.type==='room')c.room=m.room;});await wait(()=>c.id);return c;}
  try{

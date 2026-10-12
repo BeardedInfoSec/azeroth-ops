@@ -298,3 +298,9 @@ body>footer span:first-child{color:var(--cod-accent)}
 
 /* clip-path would crop the focus ring, so drop it while focused */
 :is(#menu .lan-launch,#menu #play,.workshop-launch,.map,#multiplayer-panel button,#match-session button,.br-phase button,#downloads button):focus-visible{clip-path:none}
+
+/* Layout fixes: keep the menu column inside its box on shorter windows, and keep the
+   page footer from drawing under the in-game HUD. */
+@media(max-height:960px){.hub-sub{display:none}}
+body.playing>footer{text-align:center;justify-content:center}
+body.playing>footer span:first-child,body.playing>footer span:last-child{display:none}

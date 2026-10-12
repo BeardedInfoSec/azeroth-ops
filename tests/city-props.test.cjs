@@ -1,8 +1,9 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 const root=path.resolve(__dirname,'../public/assets');
 const read=city=>JSON.parse(fs.readFileSync(path.join(root,'props',city+'.json'),'utf8'));
 
-test('All three Wrath cities retain original default-set props and resolved textures',()=>{
+test('All three Wrath cities retain original default-set props and resolved textures',skipUnlessAssets('props/stormwind.json','props/dalaran.json','props/darnassus.json'),()=>{
   const expected={stormwind:6157,dalaran:4631,darnassus:1073};
   for(const [city,count] of Object.entries(expected)){
     const props=read(city);assert.equal(props.city,city);assert.equal(props.set,'Set_$DefaultGlobal');assert.equal(props.instances.length,count);assert.equal(new Set(props.instances.map(i=>i.sourceIndex)).size,count);
@@ -12,7 +13,7 @@ test('All three Wrath cities retain original default-set props and resolved text
   }
 });
 
-test('Server movement and shot cover include every city prop instance',async()=>{
+test('Server movement and shot cover include every city prop instance',skipUnlessAssets('stormwind.json','dalaran.json','darnassus.json','props/stormwind.json','props/dalaran.json','props/darnassus.json'),async()=>{
   const {loadArena}=await import('../server/world.mjs');
   for(const city of ['stormwind','dalaran','darnassus']){
     const props=read(city),base=JSON.parse(fs.readFileSync(path.join(root,city+'.json'),'utf8'));

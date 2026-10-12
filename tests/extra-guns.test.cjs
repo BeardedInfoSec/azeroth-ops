@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 const NEW=['mp7_mp','vector_mp','type95_mp','sig556_mp','mk48_mp','870mcs_mp','fiveseven_mp','as50_mp'];
 const CLASSES={mp7_mp:'smg',vector_mp:'smg',type95_mp:'ar',sig556_mp:'ar',mk48_mp:'lmg','870mcs_mp':'shotgun',fiveseven_mp:'pistol',as50_mp:'sniper'};
 const sha=data=>crypto.createHash('sha256').update(data).digest('hex');
@@ -12,7 +13,7 @@ test('the original four guns keep their indices and gameplay values; new guns ar
     [[30,40,.096,.096,2.475,3.105,.25,false,'1'],[30,45,.096,.096,2.4,3,.25,false,'2'],[5,98,.4,1.5,3.4,4,.4,true,'6'],[7,95,.3,1.26,3.1,3.75,.35,true,'7']]);
 });
 
-test('each new gun records class, magazine, timings, damage curve and muzzle/sight tags from the patched definition',async()=>{
+test('each new gun records class, magazine, timings, damage curve and muzzle/sight tags from the patched definition',skipUnlessAssets('weapons/definitions.json'),async()=>{
   const {GUNS}=await import('../src/weapon-data.js'),definitions=JSON.parse(fs.readFileSync('public/assets/weapons/definitions.json','utf8'));
   for(const id of NEW){
     const gun=GUNS.find(g=>g.id===id),fields=definitions[id].fields;
@@ -27,7 +28,7 @@ test('each new gun records class, magazine, timings, damage curve and muzzle/sig
   assert.equal(GUNS.find(g=>g.id==='870mcs_mp').pellets,8);assert.equal(GUNS.find(g=>g.id==='sig556_mp').fireMode,'burst');assert.equal(GUNS.find(g=>g.id==='as50_mp').scope,'/assets/weapons/scope_overlay_xpr50.png');
 });
 
-test('every new gun model, magazine, scope and texture is a prepared local file with provenance hashes',async()=>{
+test('every new gun model, magazine, scope and texture is a prepared local file with provenance hashes',skipUnlessAssets('weapons/provenance.json'),async()=>{
   const {GUNS}=await import('../src/weapon-data.js'),provenance=JSON.parse(fs.readFileSync('public/assets/weapons/provenance.json','utf8'));
   for(const id of NEW){
     const gun=GUNS.find(g=>g.id===id);
@@ -42,7 +43,7 @@ test('every new gun model, magazine, scope and texture is a prepared local file 
   }
 });
 
-test('every gun has original BO2 firing and reload audio, and the new guns keep distinct firing recordings',()=>{
+test('every gun has original BO2 firing and reload audio, and the new guns keep distinct firing recordings',skipUnlessAssets('audio/manifest.json'),()=>{
   const manifest=JSON.parse(fs.readFileSync('public/assets/audio/manifest.json','utf8')),signatures=new Set();
   for(const id of NEW){
     const weapon=manifest.weapons[id];assert.ok(weapon,id);assert.ok(weapon.shot.length&&weapon.remoteShot.length&&weapon.reload.length&&weapon.reloadEmpty.length,id);

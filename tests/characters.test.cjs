@@ -1,8 +1,9 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const manifest=JSON.parse(fs.readFileSync('public/assets/characters/manifest.json'));
-test('Wrath factions contain exactly their five races; Scourge is separate',async()=>{
+const {hasAssets,skipUnlessAssets}=require('./helpers/assets.cjs');
+const manifest=hasAssets('characters/manifest.json')?JSON.parse(fs.readFileSync('public/assets/characters/manifest.json')):null;
+test('Wrath factions contain exactly their five races; Scourge is separate',skipUnlessAssets('characters/manifest.json'),async()=>{
   const {ROSTERS,rosterFor,opposite}=await import('../src/rules.mjs');
   for(const faction of ['alliance','horde']){
     const actual=manifest.characters.filter(c=>c.faction===faction).map(c=>c.id);assert.deepEqual(actual,ROSTERS[faction]);
@@ -21,7 +22,7 @@ test('Friendly kills never score; opposing kills reach the win condition',async(
 test('Survival waves increase and cap their population and difficulty',async()=>{
   const {waveSettings}=await import('../src/rules.mjs');assert.equal(waveSettings(1).count,6);assert.equal(waveSettings(2).count,8);assert.equal(waveSettings(100).count,18);assert.ok(waveSettings(5).health>waveSettings(1).health);
 });
-for(const info of manifest.characters)test(info.name+' has usable geometry, textures, bones and original animations',()=>{
+for(const info of manifest?manifest.characters:[])test(info.name+' has usable geometry, textures, bones and original animations',skipUnlessAssets('characters/manifest.json'),()=>{
   const c=JSON.parse(fs.readFileSync('public'+info.file));assert.ok(c.bones.length>20);assert.ok(c.parts.length>0);
   for(const p of c.parts){assert.ok(fs.existsSync('public'+p.texture));assert.equal(p.indices.length%3,0);assert.ok(p.indices.every(i=>i<c.positions.length/3));}
   assert.ok(c.joints.every(j=>j<c.bones.length));assert.equal(c.weights.length,c.joints.length);

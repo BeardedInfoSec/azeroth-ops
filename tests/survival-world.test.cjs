@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 
 async function fixture(){
   const THREE=await import('three'),{SurvivalWorld}=await import('../src/survival-world.js');
@@ -76,7 +77,7 @@ test('Covered entry paths stay clear around their baffles while hiding newly spa
   }finally{env.dispose();}
 });
 
-for(const city of ['stormwind','dalaran','darnassus'])test(city+' expansion keeps every machine, weapon rack and active entry physically reachable',async()=>{
+for(const city of ['stormwind','dalaran','darnassus'])test(city+' expansion keeps every machine, weapon rack and active entry physically reachable',skipUnlessAssets(city+'.json','props/'+city+'.json'),async()=>{
   const THREE=await import('three'),{loadArena}=await import('../server/world.mjs'),{GroundNavigation}=await import('../src/navigation.js'),{SurvivalWorld}=await import('../src/survival-world.js'),{ARENAS}=await import('../src/world.js'),{clearSpawn}=await import('../src/spawns.js');
   const arena=await loadArena(city),base=ARENAS[city].spawn;let best=null;
   // Match the playable client's safe-spawn search, including imported prop collision.

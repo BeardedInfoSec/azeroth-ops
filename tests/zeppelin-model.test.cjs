@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 
 async function fixture(){
   const T=await import('three'),api=await import('../src/zeppelin-model.js'),texture=new T.Texture();
@@ -31,7 +32,7 @@ test('Zeppelin instances animate independently and release skeletons without des
   b.dispose();template.dispose();assert.equal(geometryDisposals,1);assert.equal(textureDisposals,1);
 });
 
-test('Named Horde export contains the full hull, all authored doodads, animation tracks, and existing original textures',async()=>{
+test('Named Horde export contains the full hull, all authored doodads, animation tracks, and existing original textures',skipUnlessAssets('transports/horde-zeppelin.json'),async()=>{
   // Only this small named transport is read. No city, browser, GPU or image decode.
   const data=JSON.parse(fs.readFileSync('public/assets/transports/horde-zeppelin.json'));
   assert.match(data.source,/transport_horde_zeppelin\/Transport_Horde_Zeppelin\.wmo$/);assert.equal(data.groups.length,1);assert.equal(data.instances.length,7);assert.equal(data.presentation.yaw,-Math.PI/2,'stern (rudder/engine bones) sits at native +X, so the bow needs -90 degrees to lead');assert.equal(data.models.length,3);

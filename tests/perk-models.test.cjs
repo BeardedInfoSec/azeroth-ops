@@ -1,4 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {skipUnlessAssets}=require('./helpers/assets.cjs');
 
 test('Machine instances fit the collision box, stay grounded, and share only immutable textures',async()=>{
   const T=await import('three'),{clonePerkModel}=await import('../src/perk-models.js');
@@ -24,7 +25,7 @@ test('Decorative machine triangles are excluded from shot raycasts',async()=>{
   assert.equal(hits.length,0);instance.dispose();scene.children[0].geometry.dispose();scene.children[0].material.dispose();
 });
 
-test('All twelve perks and Pack-a-Punch resolve to prepared genuine BO2 models and local PNGs',async()=>{
+test('All twelve perks and Pack-a-Punch resolve to prepared genuine BO2 models and local PNGs',skipUnlessAssets('machines/manifest.json'),async()=>{
   const {ZOMBIE_PERKS}=await import('../src/zombie-upgrades.mjs'),dir=path.resolve('public/assets/machines');
   const manifest=JSON.parse(fs.readFileSync(path.join(dir,'manifest.json')));
   assert.deepEqual(Object.keys(manifest.machines).sort(),[...ZOMBIE_PERKS.map(perk=>perk.id),'pack-a-punch'].sort());
@@ -41,7 +42,7 @@ test('All twelve perks and Pack-a-Punch resolve to prepared genuine BO2 models a
   }
 });
 
-test('Both knife exports retain original BO2 geometry and valid local texture references',()=>{
+test('Both knife exports retain original BO2 geometry and valid local texture references',skipUnlessAssets('weapons/t6_wpn_knife_base_view_lod0.glb','weapons/t6_wpn_knife_melee_lod0.glb'),()=>{
   for(const name of ['t6_wpn_knife_base_view_lod0','t6_wpn_knife_melee_lod0']){
     const file=fs.readFileSync('public/assets/weapons/'+name+'.glb'),gltf=JSON.parse(file.toString('utf8',20,20+file.readUInt32LE(12)));
     assert.equal(file.readUInt32LE(8),file.length);assert.ok(gltf.meshes.length);

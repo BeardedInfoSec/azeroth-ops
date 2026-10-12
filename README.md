@@ -342,6 +342,8 @@ node scripts/check-snipers.cjs
 node scripts/check-survival.cjs
 ```
 
+`npm test` skips tests that need local game assets; run the importers for full coverage. Set `AO_FORCE_NO_ASSETS=1` to simulate a clean clone.
+
 The browser smoke test uses installed Chrome through Playwright. It tests all ten race selections, both combat modes in all three maps, valid spawns, animated enemy movement, firing and eliminations, survival entry breaches and point rewards, reloads, weapon switching, third person, pause and exploration; it saves screenshots and results in `artifacts/`. Browser tests simulate the Pointer Lock API so hidden test windows cannot confine the Windows desktop cursor. Actual mouse capture is used only during interactive play; Escape, loss of focus, or switching tabs releases it.
 
 Re-import WoW with:
