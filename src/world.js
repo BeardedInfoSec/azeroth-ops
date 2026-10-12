@@ -4,9 +4,10 @@ import {loadProps} from './props.js';
 import {assetFetch} from './asset-cache.mjs';
 import {defaultLayout,validateLayout} from './map-layout.mjs';
 import {loadCachedTextureSet} from './asset-loaders.js';
+import {DISTRICTS,cityAssetCandidates} from './districts.mjs';
 THREE.Mesh.prototype.raycast = acceleratedRaycast;
 export const ARENAS = {
-  stormwind:{name:'Stormwind',subtitle:'Trade District',spawn:[-141,-8.02,3],yaw:4.712,sky:0x91b8d0,fog:0xa7c3cd},
+  ...Object.fromEntries(DISTRICTS.map(d=>[d.id,{name:d.name,subtitle:d.subtitle,spawn:[...d.origin],yaw:d.yaw,sky:d.sky,fog:d.fog,district:true,radius:d.radius}])),
   dalaran:{name:'Dalaran',subtitle:'The Eventide',spawn:[4,5.72,32],yaw:0,sky:0x9999c5,fog:0xb6aecb},
   darnassus:{name:'Darnassus',subtitle:'Temple Gardens',spawn:[-310,-4.88,398],yaw:3.142,sky:0x586878,fog:0x779299},
 };
@@ -15,7 +16,9 @@ export async function loadWorld(id, progress,layoutOverride=null) {
   if(!layout){const response=await fetch('/api/layouts/'+id,{cache:'no-store'});if(response.status===404)layout=defaultLayout(id);else{if(!response.ok)throw new Error('Could not load saved map layout');layout=await response.json();}}
   layout=validateLayout(layout,{city:id});
   progress('Reading '+ARENAS[id].name+' geometry…');
-  const response=await assetFetch('/assets/'+id+'.json');
+  // Districts load their small generated pack and fall back to the full city (same coordinates).
+  let response;
+  for(const candidate of cityAssetCandidates(id)){response=await assetFetch('/assets/'+candidate.geometry);if(response.ok)break;}
   if(!response.ok)throw new Error('City assets missing. Run npm run import first.');
   const data=await response.json();
   progress('Building surfaces and collision…');

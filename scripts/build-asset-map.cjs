@@ -17,8 +17,8 @@ const MAX_JSON_BYTES = 1024 * 1024;
 // ---------------------------------------------------------------------------
 const CLASSIFICATION = {
   'public/assets/(root files)': {
-    origin: 'WOW_3_3_5', gameplayRole: 'City manifests (stormwind/dalaran/darnassus.json) and import provenance; world layer.',
-    sourceNote: 'WMO city geometry converted from the user WoW 3.3.5 (build 12340) client.', importScript: 'scripts/import-wow.cjs', redistributable: false },
+    origin: 'WOW_3_3_5', gameplayRole: 'City manifests (stormwind/dalaran/darnassus.json), the clipped Stormwind district packs (stormwind-trade/-dwarven/-valley/-park.json) and import provenance; world layer.',
+    sourceNote: 'WMO city geometry converted from the user WoW 3.3.5 (build 12340) client. District packs are triangle-clipped subsets of stormwind.json (no new source data).', importScript: 'scripts/import-wow.cjs (district packs: scripts/build-districts.cjs)', redistributable: false },
   'public/assets/textures': {
     origin: 'WOW_3_3_5', gameplayRole: 'City WMO textures (BLP decoded to PNG, hashed names).',
     sourceNote: 'Wrath BLP textures; count recorded in assets/provenance.json.', importScript: 'scripts/import-wow.cjs + scripts/textures.py', redistributable: false },
@@ -26,8 +26,8 @@ const CLASSIFICATION = {
     origin: 'WOW_3_3_5', gameplayRole: 'Playable race, ghoul and zombie meshes, skeletons and animation tracks (world layer).',
     sourceNote: 'Wrath MD20 models + skins; per-race source paths in characters/manifest.json.', importScript: 'scripts/import-characters.cjs', redistributable: false },
   'public/assets/props': {
-    origin: 'WOW_3_3_5', gameplayRole: 'WMO doodad props, M2 models and collision hulls for all three cities.',
-    sourceNote: 'Wrath WMO MODD placements and M2 meshes.', importScript: 'scripts/import-props.cjs', redistributable: false },
+    origin: 'WOW_3_3_5', gameplayRole: 'WMO doodad props, M2 models and collision hulls for all three cities, plus the per-district prop packs (props/stormwind-*.json).',
+    sourceNote: 'Wrath WMO MODD placements and M2 meshes. District prop packs keep the original instance ids of props/stormwind.json.', importScript: 'scripts/import-props.cjs (district packs: scripts/build-districts.cjs)', redistributable: false },
   'public/assets/transports': {
     origin: 'WOW_3_3_5', gameplayRole: 'Horde zeppelin hull, balloon, textures and doodad animation (Battle Royale).',
     sourceNote: 'Transport_Horde_Zeppelin.wmo + exact dependencies (transports/provenance.json).', importScript: 'scripts/import-zeppelin.cjs', redistributable: false },
@@ -50,7 +50,7 @@ const CLASSIFICATION = {
     origin: 'ORIGINAL', gameplayRole: 'User-authored Map Workshop layouts (JSON placements). Not present until the editor saves one.',
     sourceNote: 'Authored in-app; references WoW/BO2 models by path only.', importScript: '(editor, server)', redistributable: true },
   'public/ui': {
-    origin: 'MIXED', gameplayRole: 'Menu card art for the three cities.',
+    origin: 'MIXED', gameplayRole: 'Menu card art for each city and Stormwind district.',
     sourceNote: 'Screenshots produced by scripts/capture-menu-art.cjs from the running game: WoW city geometry, possibly with BO2 weapon models or HUD in frame.', importScript: 'scripts/capture-menu-art.cjs', redistributable: false },
 };
 const ROOT_FILES_KEY = 'public/assets/(root files)';

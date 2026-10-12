@@ -20,7 +20,7 @@ A custom local FPS engine and playable prototype built in this directory. It use
 
 ## Play
 
-Double-click **Start Azeroth Ops.cmd**, or open **http://127.0.0.1:8097** if the server is already running. Choose Stormwind, Dalaran, or Darnassus, choose Battle Royale, Undead survival, Horde vs Alliance, or Explore, and click Deploy. The game captures the mouse; Escape releases it and pauses. Chrome or Edge on a desktop with WebGL2 is recommended.
+Double-click **Start Azeroth Ops.cmd**, or open **http://127.0.0.1:8097** if the server is already running. Choose Stormwind (or one of its district maps), Dalaran, or Darnassus, choose Battle Royale, Undead survival, Horde vs Alliance, or Explore, and click Deploy. The game captures the mouse; Escape releases it and pauses. Chrome or Edge on a desktop with WebGL2 is recommended.
 
 | Input | Action |
 |---|---|
@@ -87,6 +87,30 @@ Open **Map Workshop** from the main menu or multiplayer lobby, or visit **http:/
 Undo/redo, JSON import/export and browser draft recovery are included. The editor shows actual prop positions, not city terrain/building geometry; set Y manually and check placement in game. Added COD machines are scenery; the automatic perk stations provide purchases. Host-saved layouts apply to everybody joining a new LAN match, with the same placed and hidden collision geometry on the server.
 
 Verification uses small sequential CPU fixtures for melee authority, editor saves/schema, placed collision, atmosphere, fortification styles, model fitting and resource cleanup. No browser/GPU gameplay test was run for this update; visual scale, placement and lighting still need an in-game check. Vanguard remains untouched.
+
+## Stormwind districts
+
+The full city (`stormwind.json`, about 41 MB and 728k triangles) is too heavy for a quick match, so Stormwind is also offered as **district maps**: circular slices of the same city that load in a fraction of the time and memory and give each mode a distinct arena. Nothing new is imported. The district packs are generated locally from the already-imported full city and, like all game assets, are git-ignored (`public/assets/`); the repository only contains the build script and the table that defines them.
+
+| Map id | District | Suits | Notes |
+|---|---|---|---|
+| `stormwind` | Trade District | TDM, Domination, Zombies, Battle Royale | The original arena and the legacy id; saved layouts, hidden props and lobbies keep working. Now loads a ~62k triangle pack instead of the full city. |
+| `stormwind-dwarven` | Dwarven District | TDM, Domination, Zombies | Broad flat court ringed by towers and arches. |
+| `stormwind-valley` | Valley of Heroes | TDM, Domination, Zombies | Large paved yard, garrison and halls. |
+| `stormwind-park` | Stormwind Park (Night Elf Quarter) | TDM, Domination | Round plaza with taverns; fewest groups, fastest load. |
+
+How it works: `src/districts.mjs` is the single source of truth (ids, origins, radius, names, pure clipping helpers) shared by the browser, the multiplayer server, the build script and the tests. A pack keeps every triangle whose centroid lies within 100 units of the district origin, drops unused materials, and keeps group names and all world coordinates unchanged (no re-centring), so layouts and prop ids remain valid. District props keep their original instance index (`hiddenProps` still refers to the original ids) and the pack records the original `instanceCount`; models not used in the district are replaced by empty stubs so `wow:<n>` prefabs keep their numbers. The playable area is unchanged: combat is confined to 75 units around the deployment point on both the client and the server, and the deployment point is found within 24 units of the district origin, so players can never reach the clipped edge (75 + 24 < 100).
+
+Rebuild after (re)importing the city, or after editing the table:
+
+```
+npm run build:districts          # writes public/assets/stormwind-*.json and public/assets/props/stormwind-*.json
+node scripts/build-districts.cjs --only stormwind-park
+```
+
+`npm run import:wow-all` runs it automatically after the prop import. If a pack is missing the game falls back to the full city for that id (same coordinates, just slower and heavier), so a clean setup still plays. **Map Downloads** lists each district separately; a district only downloads its own geometry, props and the textures it actually uses (shared textures are stored once).
+
+Menu preview art (`public/ui/<id>.jpg`) is also git-ignored; until it is captured (`node scripts/capture-menu-art.cjs [ids...]`) the district cards and lobby preview fall back to the Stormwind picture under a tinted gradient. The Map Workshop city selector lists every district; its prop catalog shows only the props inside the chosen district.
 
 ## Map downloads and browser caching (build 0.10.0)
 
@@ -393,6 +417,7 @@ The survival browser check covers actual entry attacks, repairs, purchases and r
 - `scripts/import-characters.cjs`: Wrath M2/SKIN, DBC appearances, bones and animation extraction.
 - `public/characters.html`: local character and animation gallery.
 - `src/world.js`: original WMO mesh/material loading and BVH construction.
+- `src/districts.mjs`, `scripts/build-districts.cjs`, `public/districts.css`: Stormwind district table (ids, origins, radius), pure triangle/prop clipping helpers, the pack build script and the compact district map-card styling.
 - `src/props.js`, `scripts/import-props.cjs`: original WMO doodad placements for all three cities, M2 rendering and matching client/server collision hulls.
 - `src/player-config.js`: shared eye height and collision radius.
 - `src/spawns.js`: footing/body clearance and threat-aware spawn selection.

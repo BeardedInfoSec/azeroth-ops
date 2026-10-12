@@ -3,7 +3,8 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const {pathToFileURL} = require('node:url');
 const schema = import(pathToFileURL(path.resolve(__dirname,'../src/map-layout.mjs')).href);
-const CITIES = new Set(['stormwind','dalaran','darnassus']);
+const districts = import(pathToFileURL(path.resolve(__dirname,'../src/districts.mjs')).href);
+const CITIES = new Set(['stormwind','stormwind-dwarven','stormwind-valley','stormwind-park','dalaran','darnassus']);
 const ROOT = path.resolve(__dirname,'..');
 
 // Read only the small source/instance metadata. Numeric geometry arrays are
@@ -42,13 +43,15 @@ function createMapLayouts({root=ROOT,now=Date.now,ttlMs=60000}={}){
   async function catalog(city){
     requireCity(city);const previous=catalogCache.get(city);if(previous&&now()<previous.expires)return previous.promise;
     const promise=(async()=>{
-      const {EDITOR_CITIES,LAYOUT_PREFABS}=await schema;
+      const {EDITOR_CITIES,LAYOUT_PREFABS}=await schema,{cityAssetCandidates}=await districts;
       let data,warning;
-      try{data=await readPropMetadata(path.join(publicRoot,'assets/props',city+'.json'));}catch(error){if(error.code!=='ENOENT')throw error;data={models:[],instances:[]};warning='Original props have not been imported for this city.';}
+      // Districts list their own pack (original prop ids preserved) before the full city.
+      for(const candidate of cityAssetCandidates(city)){try{data=await readPropMetadata(path.join(publicRoot,'assets',candidate.props));break;}catch(error){if(error.code!=='ENOENT')throw error;}}
+      if(!data){data={models:[],instances:[]};warning='Original props have not been imported for this city.';}
       const models=Array.isArray(data.models)?data.models:[],instances=Array.isArray(data.instances)?data.instances:[];
       if(models.length>20000||instances.length>20000)throw new Error('Editor prop count exceeds the limit');
       const prefabs=LAYOUT_PREFABS.map(value=>({...value}));
-      models.forEach((model,index)=>{if(typeof model.source==='string')prefabs.push({id:'wow:'+index,name:model.source.split(/[\\/]/).pop().replace(/\.m2$/i,'').replace(/[_-]+/g,' '),category:'World of Warcraft',source:model.source,size:[1,1,1],modelIndex:index});});
+      models.forEach((model,index)=>{if(typeof model.source==='string'&&!model.stub)prefabs.push({id:'wow:'+index,name:model.source.split(/[\\/]/).pop().replace(/\.m2$/i,'').replace(/[_-]+/g,' '),category:'World of Warcraft',source:model.source,size:[1,1,1],modelIndex:index});});
       // Catalog only imported machine models, never placeholders or paths into
       // an installed game. These editor placements are scenery, not shop logic.
       try{
@@ -57,8 +60,8 @@ function createMapLayouts({root=ROOT,now=Date.now,ttlMs=60000}={}){
           for(const item of entries){const url=item.model||item.url||item.file;if(item.available!==false&&/^[a-z0-9_-]{1,48}$/.test(item.id||'')&&typeof url==='string'&&/^\/assets\/machines\/[a-zA-Z0-9_./-]+\.glb$/.test(url)&&!url.includes('..')){try{await fs.promises.access(path.join(publicRoot,url));prefabs.push({id:'machine:'+item.id,name:(item.name||item.id.replace(/_/g,' '))+' (scenery)',category:'Imported COD machines',size:[1,2.7,1],url});}catch{}}}
         }
       }catch(error){if(error.code!=='ENOENT')warning='Machine catalog unavailable; other props remain usable.';}
-      const points=[];instances.forEach((instance,index)=>{if(Number.isSafeInteger(instance.model)&&instance.model>=0&&instance.model<models.length&&Array.isArray(instance.position)&&instance.position.length===3&&instance.position.every(Number.isFinite))points.push({id:index,model:instance.model,position:instance.position,rotation:instance.rotation,scale:instance.scale});});
-      return {city,...EDITOR_CITIES[city],prefabs,instances:points,instanceCount:instances.length,warning};
+      const points=[];instances.forEach((instance,index)=>{if(Number.isSafeInteger(instance.model)&&instance.model>=0&&instance.model<models.length&&Array.isArray(instance.position)&&instance.position.length===3&&instance.position.every(Number.isFinite))points.push({id:instance.index??index,model:instance.model,position:instance.position,rotation:instance.rotation,scale:instance.scale});});
+      return {city,...EDITOR_CITIES[city],prefabs,instances:points,instanceCount:Number.isSafeInteger(data.instanceCount)?data.instanceCount:instances.length,warning};
     })();
     catalogCache.set(city,{promise,expires:now()+ttlMs});promise.catch(()=>catalogCache.delete(city));return promise;
   }
@@ -103,4 +106,4 @@ function createMapLayouts({root=ROOT,now=Date.now,ttlMs=60000}={}){
   }
   return {catalog,readLayout,saveLayout,handle};
 }
-module.exports={createMapLayouts,readPropMetadata};
+module.exports={createMapLayouts,readPropMetadata,CITIES};

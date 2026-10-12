@@ -77,7 +77,8 @@ test('Covered entry paths stay clear around their baffles while hiding newly spa
   }finally{env.dispose();}
 });
 
-for(const city of ['stormwind','dalaran','darnassus'])test(city+' expansion keeps every machine, weapon rack and active entry physically reachable',skipUnlessAssets(city+'.json','props/'+city+'.json'),async()=>{
+// District maps are gated on their own generated pack (npm run build:districts).
+for(const city of ['stormwind','stormwind-dwarven','stormwind-valley','stormwind-park','dalaran','darnassus'])test(city+' expansion keeps every machine, weapon rack and active entry physically reachable',skipUnlessAssets(city+'.json','props/'+city+'.json'),async()=>{
   const THREE=await import('three'),{loadArena}=await import('../server/world.mjs'),{GroundNavigation}=await import('../src/navigation.js'),{SurvivalWorld}=await import('../src/survival-world.js'),{ARENAS}=await import('../src/world.js'),{clearSpawn}=await import('../src/spawns.js');
   const arena=await loadArena(city),base=ARENAS[city].spawn;let best=null;
   // Match the playable client's safe-spawn search, including imported prop collision.

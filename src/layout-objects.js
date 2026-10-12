@@ -2,9 +2,11 @@ import * as T from 'three';
 
 // This same geometry feeds rendering and server/client cover. Layout edits do
 // not introduce invisible barriers or client-only paths through solid props.
+// District packs keep only nearby props; each carries its original array position as
+// `index`, which is what hiddenProps refers to.
 export function layoutInstances(data,layout){
   const hidden=new Set(layout?.hiddenProps||[]);
-  const instances=data.instances.filter((_,i)=>!hidden.has(i)).map(instance=>({...instance,solid:true}));
+  const instances=data.instances.filter((instance,i)=>!hidden.has(instance.index??i)).map(instance=>({...instance,solid:true}));
   for(const item of layout?.placements||[]){
     if(!item.prefabId.startsWith('wow:'))continue;
     const model=Number(item.prefabId.slice(4));

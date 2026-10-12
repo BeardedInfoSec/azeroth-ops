@@ -1,6 +1,7 @@
+import {DISTRICTS,defaultLighting} from './districts.mjs';
 export const LAYOUT_VERSION = 1;
 export const EDITOR_CITIES = Object.freeze({
-  stormwind:{name:'Stormwind',spawn:[-141,-8.02,3]},
+  ...Object.fromEntries(DISTRICTS.map(d=>[d.id,{name:d.name,spawn:[...d.origin]}])),
   dalaran:{name:'Dalaran',spawn:[4,5.72,32]},
   darnassus:{name:'Darnassus',spawn:[-310,-4.88,398]}
 });
@@ -13,7 +14,7 @@ export const LAYOUT_PREFABS = Object.freeze([
 ]);
 export function defaultLayout(city='stormwind') {
   if(!Object.hasOwn(EDITOR_CITIES,city))throw new Error('Unknown city');
-  return {version:LAYOUT_VERSION,city,settings:{fortifications:'light',lighting:city==='stormwind'?'spooky':'day'},placements:[],hiddenProps:[]};
+  return {version:LAYOUT_VERSION,city,settings:{fortifications:'light',lighting:defaultLighting(city)},placements:[],hiddenProps:[]};
 }
 const finite=(value,min,max)=>typeof value==='number'&&Number.isFinite(value)&&value>=min&&value<=max;
 export function validateLayout(input,{city=input?.city,prefabIds=null,instanceCount=20000}={}) {

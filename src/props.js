@@ -4,6 +4,7 @@ import {assetFetch} from './asset-cache.mjs';
 import {layoutInstances,createLayoutPrefab,appendObjectGeometry} from './layout-objects.js';
 import {loadCachedTextureSet} from './asset-loaders.js';
 import {loadPerkModels,createPerkModel} from './perk-models.js';
+import {cityAssetCandidates,getDistrict} from './districts.mjs';
 
 export async function addLayoutProps(group,placements,collisionPositions,collisionIndices,shotPositions,shotIndices,{loadMachines=loadPerkModels,makeMachine=createPerkModel}={}){
   const machines=[];
@@ -26,9 +27,10 @@ export async function addLayoutProps(group,placements,collisionPositions,collisi
 }
 
 export async function loadProps(city,progress,layout=null){
-  if(!['stormwind','dalaran','darnassus'].includes(city))throw new Error('Unknown prop city '+city);
+  if(!getDistrict(city)&&!['dalaran','darnassus'].includes(city))throw new Error('Unknown prop city '+city);
   progress('Loading original '+city+' props...');
-  const response=await assetFetch('/assets/props/'+city+'.json');
+  let response;
+  for(const candidate of cityAssetCandidates(city)){response=await assetFetch('/assets/'+candidate.props);if(response.ok)break;}
   if(!response.ok)throw new Error(city+' props missing. Run npm run import:props.');
   const data=await response.json(),group=new THREE.Group();
   const collisionPositions=[],collisionIndices=[],shotPositions=[],shotIndices=[],fountains=[];

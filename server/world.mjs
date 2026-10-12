@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createMapLayouts} from './map-layouts.cjs';
+import {DISTRICTS,cityAssetCandidates} from '../src/districts.mjs';
 import {layoutInstances,appendLayoutCollision} from '../src/layout-objects.js';
 const layouts=createMapLayouts({root:fileURLToPath(new URL('..',import.meta.url))});
 import * as T from 'three';
@@ -11,8 +12,17 @@ import {CharacterCollision} from '../src/engine/character-collision.js';
 import {PLAYER_EYE_HEIGHT,PLAYER_CROUCH_EYE_HEIGHT,PLAYER_RADIUS} from '../src/player-config.js';
 import {stanceEye,canStandAt} from '../src/engine/player-stance.js';
 T.Mesh.prototype.raycast=acceleratedRaycast;
-const origins={stormwind:[-141,-8.02,3],dalaran:[4,5.72,32],darnassus:[-310,-4.88,398]},cache=new Map();
+const origins={...Object.fromEntries(DISTRICTS.map(d=>[d.id,d.origin])),dalaran:[4,5.72,32],darnassus:[-310,-4.88,398]},cache=new Map();
 const read=async file=>JSON.parse(await fs.readFile(new URL('../public/assets/'+file,import.meta.url),'utf8'));
+// Districts prefer their generated pack and fall back to the full city (same coordinates).
+async function readCity(city){
+  let missing;
+  for(const candidate of cityAssetCandidates(city)){
+    try{return {data:await read(candidate.geometry),props:await read(candidate.props)};}
+    catch(error){if(error.code!=='ENOENT')throw error;missing=error;}
+  }
+  throw missing;
+}
 export function createArenaStance(collider){
   const standing=new CharacterCollision(PLAYER_EYE_HEIGHT,PLAYER_RADIUS),crouching=new CharacterCollision(PLAYER_CROUCH_EYE_HEIGHT,PLAYER_RADIUS);
   return {
@@ -99,10 +109,10 @@ export function createSpawner(spawns,teamOf,trace,{random=Math.random,maxCandida
   };
 }
 async function build(city,layout){
-  const data=await read(city+'.json'),positions=[],indices=[],shotPositions=[],shotIndices=[];
+  const {data,props}=await readCity(city),positions=[],indices=[],shotPositions=[],shotIndices=[];
   for(const g of data.groups){const base=positions.length/3;for(const v of g.positions)positions.push(v);for(const batch of g.batches)if(data.materials[batch.material]?.blend<=1)for(let i=batch.start;i<batch.start+batch.count;i++)indices.push(base+g.indices[i]);}
   {
-    const props=await read('props/'+city+'.json'),m=new T.Matrix4(),v=new T.Vector3();
+    const m=new T.Matrix4(),v=new T.Vector3();
     for(const instance of layoutInstances(props,layout)){if(!instance.solid)continue;const model=props.models[instance.model];m.compose(new T.Vector3().fromArray(instance.position),new T.Quaternion().fromArray(instance.rotation).normalize(),new T.Vector3().setScalar(instance.scale));
       for(const [input,out,idx,source] of [[model.collision,positions,indices,model.collision.indices],[model,shotPositions,shotIndices,model.parts.filter(p=>p.blend===0).flatMap(p=>p.indices)]]){const base=out.length/3;for(let j=0;j<input.positions.length;j+=3){v.fromArray(input.positions,j).applyMatrix4(m);out.push(v.x,v.y,v.z);}for(const i of source)idx.push(base+i);}
     }

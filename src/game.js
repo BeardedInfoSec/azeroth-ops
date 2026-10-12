@@ -40,6 +40,7 @@ import {loadWorld,ARENAS} from './world.js';
 import {GUNS,loadWeapons} from './weapons.js';
 import {loadCharacters,createCharacter,characterInfo,FACTIONS} from './characters.js';
 import {Combat} from './combat.js';
+import {COMBAT_RADIUS,exploreLimit} from './districts.mjs';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 const clone=source=>installSkinnedRaycast(cloneSkeleton(source));
 const $=id=>document.getElementById(id);
@@ -385,7 +386,7 @@ function move(dt){
     // Alternate the solvers, ending outside fortifications so backing away works.
     if(fort)for(let pass=0;pass<3;pass++){const corrected=resolvePlayerCover(player,player,colliders);if(corrected.distanceToSquared(player)<1e-10)break;player.copy(corrected);if(pass<2)collide();}
   }
-  if(player.y<spawn.y-30||player.distanceTo(spawn)>(mode!=='explore'?75:750)){player.copy(spawn);vertical=0;velocity.set(0,0,0);notify(mode!=='explore'?'RETURNED TO COMBAT AREA':'RETURNED TO SAFE GROUND');}
+  if(player.y<spawn.y-30||player.distanceTo(spawn)>(mode!=='explore'?COMBAT_RADIUS:exploreLimit(city))){player.copy(spawn);vertical=0;velocity.set(0,0,0);notify(mode!=='explore'?'RETURNED TO COMBAT AREA':'RETURNED TO SAFE GROUND');}
   if(grounded&&!wasGrounded){combat?.survival?.onLand(Math.max(0,(airbornePeak??player.y)-player.y));airbornePeak=null;}else if(!grounded)airbornePeak=Math.max(airbornePeak??player.y,player.y);
   updateViewPose(dt,sprint,v);
   if(combat?.survival?.recovery){weapon.visible=false;scope.hidden=true;}
@@ -454,7 +455,8 @@ function updateOperatorPreview(dt){
   const lobbyOpen=document.body.classList.contains('lobby-open'),operatorView=lobbyOpen&&lobby?.view==='operator';
   if(operatorView){if($('operator').parentElement!==$('lobby-operator-stage'))$('lobby-operator-stage').append($('operator'));}else if($('operator').parentElement!==document.body)operatorHome.after($('operator'));
   if(operatorActor&&!active&&(!lobbyOpen||operatorView)){fitMenuRenderer(previewRenderer,previewCamera,$('operator-canvas'));operatorActor.update(dt);previewRenderer.render(previewScene,previewCamera);}
-  const map=lobby?.room?.city||city;if(map!==menuMap){menuMap=map;$('lobby-map-preview').style.backgroundImage='url(/ui/'+map+'.jpg)';$('lobby-map-preview').setAttribute('aria-label',ARENAS[map].name+' battlefield');$('lobby-map-name').textContent=ARENAS[map].name.toUpperCase();$('lobby-map-location').textContent=ARENAS[map].subtitle.toUpperCase();}
+  const map=lobby?.room?.city||city;if(map!==menuMap){menuMap=map;$('lobby-map-preview').style.backgroundImage="url('/ui/"+map+".jpg'),url('/ui/stormwind.jpg')"; // a missing district preview falls back to the Stormwind art
+  $('lobby-map-preview').setAttribute('aria-label',ARENAS[map].name+' battlefield');$('lobby-map-name').textContent=ARENAS[map].name.toUpperCase();$('lobby-map-location').textContent=ARENAS[map].subtitle.toUpperCase();}
   if(gunsReady&&!active&&lobbyOpen&&lobby?.view==='classes'){
     const index=Number($('class-primary').value);
     if(index!==armoryIndex){armoryIndex=index;if(armoryModel){armoryModel.traverse(o=>{if(o.isSkinnedMesh)o.skeleton.dispose();});armoryModel.removeFromParent();}armoryPivot.rotation.set(0,0,0);armoryModel=clone(gunModels[index]);armoryModel.visible=true;armoryModel.position.set(0,0,0);armoryPivot.add(armoryModel);armoryScene.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(armoryModel),center=bounds.getCenter(new THREE.Vector3()),radius=bounds.getSize(new THREE.Vector3()).length()/2;armoryModel.position.sub(center);armoryCamera.position.copy(new THREE.Vector3(1,.25,.36).normalize().multiplyScalar(radius/Math.sin(THREE.MathUtils.degToRad(17))*1.22));armoryCamera.lookAt(0,0,0);$('armory-weapon-name').textContent=GUNS[index].name;}

@@ -12,6 +12,7 @@
     "import:props": "node scripts/import-props.cjs",
     "import:zeppelin": "node scripts/import-zeppelin.cjs",
     "import:wow-all": "node scripts/import-wow-all.cjs",
+    "build:districts": "node --max-old-space-size=4096 scripts/build-districts.cjs",
     "import:armory": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/import-armory.ps1"
   },
   "dependencies": {

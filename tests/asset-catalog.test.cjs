@@ -37,7 +37,7 @@ function fixture(t) {
   write('assets/effects/flash.png','flash');
   write('assets/textures/unreferenced.png','unused');
   write('assets/props/textures/shared.png','shared prop');
-  for(const city of ['stormwind','dalaran','darnassus']) {
+  for(const city of ['stormwind','stormwind-dwarven','stormwind-valley','stormwind-park','dalaran','darnassus']) {
     write('assets/'+city+'.json',{materials:[{texture:'/assets/textures/'+city+'.png'}],positions:[1,2,3]});
     write('assets/textures/'+city+'.png',city);
     write('assets/props/'+city+'.json',{models:[{texture:'textures/shared.png'}]});
@@ -62,7 +62,7 @@ test('stream scanning survives every token crossing small chunks without parsing
 test('city packs include exact city and prop dependencies, while shared runtime gear is deduplicated',async t => {
   const f = fixture(t), manifest = await buildAssetManifest(f);
   assert.match(manifest.version,/^[0-9a-f]{24}$/);
-  assert.deepEqual(manifest.packs.map(pack => pack.id),['core','stormwind','dalaran','darnassus']);
+  assert.deepEqual(manifest.packs.map(pack => pack.id),['core','stormwind','stormwind-dwarven','stormwind-valley','stormwind-park','dalaran','darnassus']);
   const records = new Map(manifest.assets.map(asset => [asset.url,asset]));
   assert.equal(records.size,manifest.assets.length);
   for(const pack of manifest.packs) {
@@ -76,6 +76,25 @@ test('city packs include exact city and prop dependencies, while shared runtime 
   for(const pack of manifest.packs.slice(1)) assert.deepEqual(pack.assets,[`/assets/${pack.id}.json`,`/assets/props/${pack.id}.json`,'/assets/props/textures/shared.png',`/assets/textures/${pack.id}.png`].sort());
   assert.equal(records.get('/assets/audio/fire.wav').type,'audio/wav');
   assert.equal(records.get('/assets/weapons/rifle.glb').type,'model/gltf-binary');
+});
+
+test('Stormwind district packs download only their own files; the legacy id prefers the Trade pack',async t => {
+  const f = fixture(t);
+  let manifest = await buildAssetManifest(f);
+  assert.deepEqual(manifest.packs.find(p => p.id === 'stormwind').assets.filter(u => /stormwind/.test(u)),['/assets/props/stormwind.json','/assets/stormwind.json','/assets/textures/stormwind.png'].sort(),'full city fallback until a Trade pack exists');
+  f.write('assets/stormwind-trade.json',{materials:[{texture:'/assets/textures/trade.png'}]});f.write('assets/textures/trade.png','trade');f.write('assets/props/stormwind-trade.json',{models:[{texture:'textures/shared.png'}]});
+  manifest = await buildAssetManifest(f);
+  const legacy = manifest.packs.find(p => p.id === 'stormwind');
+  assert.ok(legacy.assets.includes('/assets/stormwind-trade.json') && legacy.assets.includes('/assets/textures/trade.png'));
+  assert.equal(legacy.assets.includes('/assets/stormwind.json'),false,'the 43 MB full city is not downloaded when a Trade pack exists');
+  const dwarven = manifest.packs.find(p => p.id === 'stormwind-dwarven');
+  assert.equal(dwarven.name,'Stormwind: Dwarven District');
+  assert.equal(dwarven.assets.includes('/assets/stormwind.json'),false);
+  assert.equal(dwarven.assets.includes('/assets/textures/stormwind-valley.png'),false);
+  assert.ok(dwarven.assets.includes('/assets/props/textures/shared.png'),'shared textures are listed once per URL and reused by every pack');
+  fs.unlinkSync(path.join(f.assetRoot,'stormwind-park.json'));
+  const park = (await buildAssetManifest(f)).packs.find(p => p.id === 'stormwind-park');
+  assert.equal(park.available,false);assert.match(park.unavailableReason,/build:districts/);assert.deepEqual(park.assets,[]);
 });
 
 test('missing city imports and missing shared manifests advertise unavailable packs',async t => {

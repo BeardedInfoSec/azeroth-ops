@@ -1,0 +1,18 @@
+/* Stormwind district maps. Loaded last so these compact rules win over shell.css and
+   cod-theme.css. Menu art (public/ui/<id>.jpg) is git-ignored and captured locally
+   with scripts/capture-menu-art.cjs; until it exists every district falls back to the
+   Stormwind picture under a district-specific tint, so the cards still read as distinct. */
+#maps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:min(52vh,430px);overflow-y:auto;overflow-x:hidden;padding-right:2px;scrollbar-width:thin}
+#maps .map{min-height:64px;padding:9px 12px;text-align:left;min-width:0}
+#maps .map small{font-size:8px;letter-spacing:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#maps .map strong{display:block;font-size:17px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#maps .map span{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-height:820px){#maps .map{min-height:56px;padding:7px 11px}#maps{max-height:min(46vh,330px)}}
+@media(max-width:620px){#maps{grid-template-columns:1fr;max-height:none}#maps .map{display:block}}
+/* Fallback art: Stormwind picture first only if the district's own file is missing. */
+.map[data-map=stormwind-dwarven]{background-image:url('/ui/stormwind-dwarven.jpg'),url('/ui/stormwind.jpg'),linear-gradient(135deg,#3a2a1a,#1c1410)}
+.map[data-map=stormwind-valley]{background-image:url('/ui/stormwind-valley.jpg'),url('/ui/stormwind.jpg'),linear-gradient(135deg,#1d3550,#0d1a2a)}
+.map[data-map=stormwind-park]{background-image:url('/ui/stormwind-park.jpg'),url('/ui/stormwind.jpg'),linear-gradient(135deg,#1f3d2d,#0c1a14)}
+.download-card[data-pack="stormwind-dwarven"]::before{background-image:url('/ui/stormwind-dwarven.jpg'),url('/ui/stormwind.jpg')}
+.download-card[data-pack="stormwind-valley"]::before{background-image:url('/ui/stormwind-valley.jpg'),url('/ui/stormwind.jpg')}
+.download-card[data-pack="stormwind-park"]::before{background-image:url('/ui/stormwind-park.jpg'),url('/ui/stormwind.jpg')}

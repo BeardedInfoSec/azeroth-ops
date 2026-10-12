@@ -8,7 +8,8 @@ import {ZOMBIE_PERKS} from './survival-rules.mjs';
 import {createPerkModel} from './perk-models.js';
 
 const pair=(a,b)=>a<b?a+':'+b:b+':'+a;
-const ZONE_NAMES={stormwind:['Inner Streets','Market Perimeter','Outer Defenses'],dalaran:['City Outpost','Street Perimeter','Outer Defenses'],darnassus:['Inner Outpost','Garden Perimeter','Outer Defenses']};
+const DISTRICT_ZONES={'stormwind-dwarven':['Forge Court','Mason Perimeter','Outer Defenses'],'stormwind-valley':['Hero Yard','Garrison Perimeter','Outer Defenses'],'stormwind-park':['Moonwell Plaza','Garden Perimeter','Outer Defenses']};
+const ZONE_NAMES={stormwind:['Inner Streets','Market Perimeter','Outer Defenses'],...DISTRICT_ZONES,dalaran:['City Outpost','Street Perimeter','Outer Defenses'],darnassus:['Inner Outpost','Garden Perimeter','Outer Defenses']};
 
 // Fortifications follow cuts in the actual walkable graph, not a radius in empty space.
 export class SurvivalWorld{

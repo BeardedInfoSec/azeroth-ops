@@ -3,7 +3,10 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const TYPES = {'.json':'application/json','.glb':'model/gltf-binary','.gltf':'model/gltf+json','.bin':'application/octet-stream','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.wav':'audio/wav','.ogg':'audio/ogg','.mp3':'audio/mpeg'};
-const CITIES = [['stormwind','Stormwind'],['dalaran','Dalaran'],['darnassus','Darnassus']];
+const {pathToFileURL} = require('node:url');
+const districts = import(pathToFileURL(path.resolve(__dirname,'../src/districts.mjs')).href);
+// Download packs: the Stormwind districts (src/districts.mjs) plus the other cities.
+const OTHER_CITIES = [['dalaran','Dalaran'],['darnassus','Darnassus']];
 const OMIT = new Set(['provenance.json','definitions.json']);
 const inside = (root, file) => file.startsWith(root + path.sep);
 const digest = value => crypto.createHash('sha256').update(value).digest('hex').slice(0, 24);
@@ -96,15 +99,25 @@ async function buildAssetManifest({assetRoot}) {
   // Optional model imports expand the shared pack without making a fresh host
   // that only has the original core files unavailable.
   if(coreAvailable) for(const dir of ['machines','streaks','transports']) for(const url of await runtimeFiles(root,dir)) await collect(url,packSets[0][2]);
-  for(const [id,name] of CITIES) {
+  const {DISTRICTS,cityAssetCandidates} = await districts;
+  const cities = [...DISTRICTS.map(d => [d.id,d.packName,d.legacy]),...OTHER_CITIES.map(([id,name]) => [id,name,false])];
+  for(const [id,name,legacy] of cities) {
     const pack = new Set();
     // Incomplete local imports remain visible as empty packs, never partial
     // successful downloads. A present root with a missing dependency fails.
-    const cityFiles = [id + '.json', 'props/' + id + '.json'];
-    const present = await Promise.all(cityFiles.map(file => fs.promises.access(path.join(root, file)).then(() => true, error => { if(error.code === 'ENOENT') return false; throw error; })));
-    const available = present.every(Boolean);
+    // A district downloads only its small generated pack (shared textures are stored once
+    // by URL). The legacy 'stormwind' id also accepts the full city when no pack was built.
+    const exists = file => fs.promises.access(path.join(root, file)).then(() => true, error => { if(error.code === 'ENOENT') return false; throw error; });
+    let cityFiles = null;
+    for(const candidate of cityAssetCandidates(id)) {
+      if(!candidate.pack && !legacy && DISTRICTS.some(d => d.id === id)) continue;
+      const files = [candidate.geometry, candidate.props];
+      if((await Promise.all(files.map(exists))).every(Boolean)) { cityFiles = files; break; }
+    }
+    const available = !!cityFiles;
     if(available) for(const file of cityFiles) await collect('/assets/' + file, pack);
-    packSets.push([id,name,pack,available,available ? undefined : 'Import ' + name + ' city geometry and props on the host.']);
+    const isDistrict = DISTRICTS.some(d => d.id === id);
+    packSets.push([id,name,pack,available,available ? undefined : isDistrict && !legacy ? 'Run npm run build:districts on the host to create ' + name + '.' : 'Import ' + name + ' city geometry and props on the host.']);
   }
   const assets = [...records.values()].sort((a,b) => a.url.localeCompare(b.url));
   const packs = packSets.map(([id,name,files,available,unavailableReason]) => {

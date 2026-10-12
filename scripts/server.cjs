@@ -4,7 +4,7 @@ const path = require('node:path');
 const zlib = require('node:zlib');
 const os = require('node:os');
 const {createAssetCatalog,TYPES} = require('../server/asset-catalog.cjs');
-const {createMapLayouts} = require('../server/map-layouts.cjs');
+const {createMapLayouts,CITIES} = require('../server/map-layouts.cjs');
 const ROOT = path.resolve(__dirname, '..');
 const types = {...TYPES,'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css'};
 function resolveFile(url, root = ROOT) {
@@ -43,7 +43,7 @@ async function handleOverlays(req,res,pathname,overlays) {
   const send = (status,value,headers = {}) => {res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store',...headers});res.end(req.method === 'HEAD' ? undefined : JSON.stringify(value));};
   if(req.method !== 'GET' && req.method !== 'HEAD') {send(405,{error:'Method not allowed'},{'Allow':'GET, HEAD'});return true;}
   const params = new URL(req.url,'http://localhost').searchParams,city = params.get('city'),fortifications = params.get('fortifications') || 'light';
-  if(!['stormwind','dalaran','darnassus'].includes(city)) {send(400,{error:'Unknown city'});return true;}
+  if(!CITIES.has(city)) {send(400,{error:'Unknown city'});return true;}
   if(!['light','classic','off'].includes(fortifications)) {send(400,{error:'Unknown fortification preset'});return true;}
   try {send(200,await overlays.get(city,fortifications));}
   catch(error) {console.error('Editor overlays:',error.message);send(503,{error:'Overlay placements are unavailable. Check the imported city files.'});}
