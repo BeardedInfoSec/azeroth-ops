@@ -15,6 +15,7 @@ Captured from the running game with `node scripts/capture-screenshots.cjs` (head
 | ![Main menu](docs/screenshots/01-main-menu.jpg) | ![Multiplayer lobby](docs/screenshots/02-lobby.jpg) |
 | ![Create-a-Class armory](docs/screenshots/03-armory.jpg) | ![Zombies in Stormwind](docs/screenshots/05-zombies-first-person.jpg) |
 | ![Battle Royale zeppelin](docs/screenshots/07-royale-zeppelin.jpg) | ![Battle Royale glide](docs/screenshots/08-royale-glide.jpg) |
+| ![Map Workshop on the Dwarven District](docs/screenshots/09-map-workshop.jpg) | |
 
 A custom local FPS engine and playable prototype built in this directory. It uses the real main city WMO geometry and textures from your Wrath 3.3.5 (12340) copy, plus the original AN-94, SCAR-H, DSR 50 and Ballista weapon models and color textures from your Black Ops II installation. Both game installations are read-only inputs.
 

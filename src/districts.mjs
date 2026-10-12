@@ -35,7 +35,7 @@ export const DISTRICTS = Object.freeze([
     origin: [-89.8, -4.12, -221.8], yaw: 0, radius: PACK_RADIUS, ...STORMWIND_SKY,
     notes: 'Large paved yard with a garrison and halls. Open, moderate height.', suits: ['tdm', 'domination', 'zombies']},
   {id: 'stormwind-park', packId: 'stormwind-park', name: 'Stormwind Park', subtitle: 'Night Elf Quarter', region: 'STORMWIND DISTRICT', packName: 'Stormwind: Park',
-    origin: [-472.2, -11.3, 363.2], yaw: 0, radius: PACK_RADIUS, sky: 0x7aa0b0, fog: 0x93b4b4,
+    origin: [-472.2, -11.3, 363.2], yaw: 1.5708, radius: PACK_RADIUS, sky: 0x7aa0b0, fog: 0x93b4b4,
     notes: 'Round Night Elf plaza with taverns. Fewest groups, fastest to load.', suits: ['tdm', 'domination']},
 ]);
 
